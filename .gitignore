@@ -1,2 +1,3 @@
 .playwright-cli/
+.wrangler/
 .DS_Store
