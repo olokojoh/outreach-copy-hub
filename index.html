@@ -69,13 +69,6 @@
         overflow: auto;
       }
 
-      .toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin: 18px 0 16px;
-      }
-
       table {
         width: 100%;
         border-collapse: collapse;
@@ -153,6 +146,17 @@
         color: #8e2c27;
       }
 
+      .th-head {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .th-label {
+        font-weight: 700;
+      }
+
       .cell-actions {
         margin-top: 10px;
       }
@@ -190,19 +194,28 @@
           </div>
         </div>
         <p class="status" id="status">点击任意复制按钮即可复制对应文案。</p>
-        <div class="toolbar">
-          <button class="copy-btn" type="button" data-random-column="plain">随机复制纯文本源码</button>
-          <button class="copy-btn" type="button" data-random-column="anchor">随机复制锚文本文案源码</button>
-          <button class="copy-btn" type="button" data-random-column="rendered">随机复制渲染后文案</button>
-        </div>
-
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>纯文本文案源码</th>
-                <th>带有锚文本文案源码</th>
-                <th>锚文本渲染后文案</th>
+                <th>
+                  <div class="th-head">
+                    <span class="th-label">纯文本文案源码</span>
+                    <button class="copy-btn" type="button" data-random-column="plain">随机复制本列</button>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-head">
+                    <span class="th-label">带有锚文本文案源码</span>
+                    <button class="copy-btn" type="button" data-random-column="anchor">随机复制本列</button>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-head">
+                    <span class="th-label">锚文本渲染后文案</span>
+                    <button class="copy-btn" type="button" data-random-column="rendered">随机复制本列</button>
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody id="rows"></tbody>
@@ -285,6 +298,11 @@
         anchor: [],
         rendered: []
       };
+      const randomState = {
+        plain: { order: [], cursor: 0 },
+        anchor: { order: [], cursor: 0 },
+        rendered: { order: [], cursor: 0 }
+      };
 
       function escapeHtml(value) {
         return value
@@ -301,6 +319,42 @@
         } catch (error) {
           status.textContent = `复制失败，请手动复制。${label}`;
         }
+      }
+
+      function createShuffledIndexes(length) {
+        const order = Array.from({ length }, (_, index) => index);
+
+        for (let index = order.length - 1; index > 0; index -= 1) {
+          const swapIndex = Math.floor(Math.random() * (index + 1));
+          [order[index], order[swapIndex]] = [order[swapIndex], order[index]];
+        }
+
+        return order;
+      }
+
+      function getNextRandomText(column) {
+        const bucket = columnBuckets[column];
+        const state = randomState[column];
+
+        if (!bucket.length) {
+          return "";
+        }
+
+        if (state.order.length !== bucket.length || state.cursor >= state.order.length) {
+          const previousIndex =
+            state.order.length && state.cursor > 0 ? state.order[state.cursor - 1] : null;
+
+          state.order = createShuffledIndexes(bucket.length);
+          state.cursor = 0;
+
+          if (bucket.length > 1 && previousIndex !== null && state.order[0] === previousIndex) {
+            [state.order[0], state.order[1]] = [state.order[1], state.order[0]];
+          }
+        }
+
+        const itemIndex = state.order[state.cursor];
+        state.cursor += 1;
+        return bucket[itemIndex];
       }
 
       for (const lead of leads) {
@@ -354,8 +408,7 @@
         }
 
         const column = button.getAttribute("data-random-column");
-        const bucket = columnBuckets[column];
-        const randomText = bucket[Math.floor(Math.random() * bucket.length)];
+        const randomText = getNextRandomText(column);
         const labels = {
           plain: "随机纯文本源码",
           anchor: "随机锚文本文案源码",
