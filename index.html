@@ -69,6 +69,24 @@
         overflow: auto;
       }
 
+      .filter-panel {
+        display: grid;
+        gap: 12px;
+        margin: 0 0 18px;
+      }
+
+      .filter-label {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .filter-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
       table {
         width: 100%;
         border-collapse: collapse;
@@ -146,6 +164,31 @@
         color: #8e2c27;
       }
 
+      .filter-btn {
+        appearance: none;
+        border: 1px solid #c7b39e;
+        background: rgba(255, 249, 239, 0.72);
+        color: #5d493b;
+        border-radius: 999px;
+        padding: 9px 14px;
+        font-size: 13px;
+        line-height: 1.2;
+        cursor: pointer;
+        transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+      }
+
+      .filter-btn:hover {
+        border-color: #8e2c27;
+        color: #8e2c27;
+      }
+
+      .filter-btn.is-active {
+        border-color: #8e2c27;
+        background: linear-gradient(180deg, #a53a34 0%, #7e1f1b 100%);
+        color: #fff7ef;
+        box-shadow: 0 8px 18px rgba(126, 31, 27, 0.18);
+      }
+
       .th-head {
         display: flex;
         flex-direction: column;
@@ -192,6 +235,10 @@
               <span>name cursive font generator</span>
             </div>
           </div>
+        </div>
+        <div class="filter-panel">
+          <div class="filter-label">关键词过滤</div>
+          <div class="filter-controls" id="filter-controls"></div>
         </div>
         <p class="status" id="status">点击任意复制按钮即可复制对应文案。</p>
         <div class="table-wrap">
@@ -291,13 +338,21 @@
         }
       ];
 
+      const entries = leads.flatMap((lead) =>
+        keywords.map((item) => ({
+          keyword: item.anchor,
+          url: item.url,
+          plain: `${lead} ${item.anchor}: ${item.url} ${item.benefit}`,
+          anchor: `${lead} <a href="${item.url}">${item.anchor}</a>. ${item.benefit}`,
+          rendered: `${lead} ${item.anchor}. ${item.benefit}`
+        }))
+      );
+
       const rows = document.getElementById("rows");
+      const filterControls = document.getElementById("filter-controls");
       const status = document.getElementById("status");
-      const columnBuckets = {
-        plain: [],
-        anchor: [],
-        rendered: []
-      };
+      const initialStatus = "点击任意复制按钮即可复制对应文案。";
+      let activeKeyword = "all";
       const randomState = {
         plain: { order: [], cursor: 0 },
         anchor: { order: [], cursor: 0 },
@@ -312,12 +367,39 @@
           .replaceAll('"', "&quot;");
       }
 
-      async function copyText(text, label) {
+      function setStatus(message = initialStatus) {
+        status.textContent = message;
+      }
+
+      function getFilteredEntries() {
+        if (activeKeyword === "all") {
+          return entries;
+        }
+
+        return entries.filter((entry) => entry.keyword === activeKeyword);
+      }
+
+      function getActiveFilterLabel() {
+        return activeKeyword === "all" ? "全部" : activeKeyword;
+      }
+
+      function getFilterSummary() {
+        return `当前筛选：${getActiveFilterLabel()}（${getFilteredEntries().length} 条）`;
+      }
+
+      function resetRandomState() {
+        for (const column of Object.keys(randomState)) {
+          randomState[column].order = [];
+          randomState[column].cursor = 0;
+        }
+      }
+
+      async function copyText(text, message) {
         try {
           await navigator.clipboard.writeText(text);
-          status.textContent = `已复制: ${label}`;
+          setStatus(message);
         } catch (error) {
-          status.textContent = `复制失败，请手动复制。${label}`;
+          setStatus(`复制失败，请手动复制。${message}`);
         }
       }
 
@@ -333,7 +415,7 @@
       }
 
       function getNextRandomText(column) {
-        const bucket = columnBuckets[column];
+        const bucket = getFilteredEntries().map((entry) => entry[column]);
         const state = randomState[column];
 
         if (!bucket.length) {
@@ -357,38 +439,59 @@
         return bucket[itemIndex];
       }
 
-      for (const lead of leads) {
-        for (const item of keywords) {
-          const plain = `${lead} ${item.anchor}: ${item.url} ${item.benefit}`;
-          const anchorSource = `${lead} <a href="${item.url}">${item.anchor}</a>. ${item.benefit}`;
-          const renderedText = `${lead} ${item.anchor}. ${item.benefit}`;
+      function renderFilterControls() {
+        filterControls.innerHTML = `
+          <button class="filter-btn ${activeKeyword === "all" ? "is-active" : ""}" type="button" data-filter-keyword="all">全部</button>
+          ${keywords
+            .map(
+              (item) => `
+                <button
+                  class="filter-btn ${activeKeyword === item.anchor ? "is-active" : ""}"
+                  type="button"
+                  data-filter-keyword="${escapeHtml(item.anchor)}"
+                >${escapeHtml(item.anchor)}</button>
+              `
+            )
+            .join("")}
+        `;
+      }
 
-          columnBuckets.plain.push(plain);
-          columnBuckets.anchor.push(anchorSource);
-          columnBuckets.rendered.push(renderedText);
+      function renderRows() {
+        rows.innerHTML = getFilteredEntries()
+          .map(
+            (entry) => `
+            <td>
+              <code>${escapeHtml(entry.plain)}</code>
+              <div class="cell-actions">
+                <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.plain)}" data-label="纯文本源码">复制本条</button>
+              </div>
+            </td>
+            <td>
+              <code>${escapeHtml(entry.anchor)}</code>
+              <div class="cell-actions">
+                <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.anchor)}" data-label="锚文本文案源码">复制本条</button>
+              </div>
+            </td>
+            <td>
+              <div>${entry.anchor}</div>
+              <div class="cell-actions">
+                <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.rendered)}" data-label="渲染后文案">复制本条</button>
+              </div>
+            </td>
+          `
+          )
+          .map((cells) => `<tr>${cells}</tr>`)
+          .join("");
+      }
 
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>
-              <code>${escapeHtml(plain)}</code>
-              <div class="cell-actions">
-                <button class="copy-btn" type="button" data-copy="${escapeHtml(plain)}" data-label="纯文本源码">复制本条</button>
-              </div>
-            </td>
-            <td>
-              <code>${escapeHtml(anchorSource)}</code>
-              <div class="cell-actions">
-                <button class="copy-btn" type="button" data-copy="${escapeHtml(anchorSource)}" data-label="锚文本文案源码">复制本条</button>
-              </div>
-            </td>
-            <td>
-              <div>${anchorSource}</div>
-              <div class="cell-actions">
-                <button class="copy-btn" type="button" data-copy="${escapeHtml(renderedText)}" data-label="渲染后文案">复制本条</button>
-              </div>
-            </td>
-          `;
-          rows.appendChild(tr);
+      function setActiveKeyword(keyword, { announce = true } = {}) {
+        activeKeyword = keyword;
+        resetRandomState();
+        renderFilterControls();
+        renderRows();
+
+        if (announce) {
+          setStatus(getFilterSummary());
         }
       }
 
@@ -398,7 +501,25 @@
           return;
         }
 
-        await copyText(button.getAttribute("data-copy"), button.getAttribute("data-label"));
+        const count = getFilteredEntries().length;
+        await copyText(
+          button.getAttribute("data-copy"),
+          `已复制: ${button.getAttribute("data-label")}（当前筛选：${getActiveFilterLabel()}，${count} 条）`
+        );
+      });
+
+      filterControls.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-filter-keyword]");
+        if (!button) {
+          return;
+        }
+
+        const keyword = button.getAttribute("data-filter-keyword");
+        if (keyword === activeKeyword) {
+          return;
+        }
+
+        setActiveKeyword(keyword);
       });
 
       document.addEventListener("click", async (event) => {
@@ -409,14 +530,22 @@
 
         const column = button.getAttribute("data-random-column");
         const randomText = getNextRandomText(column);
+        const count = getFilteredEntries().length;
         const labels = {
           plain: "随机纯文本源码",
           anchor: "随机锚文本文案源码",
           rendered: "随机渲染后文案"
         };
 
-        await copyText(randomText, labels[column]);
+        await copyText(
+          randomText,
+          `已复制: ${labels[column]}（当前筛选：${getActiveFilterLabel()}，${count} 条）`
+        );
       });
+
+      renderFilterControls();
+      renderRows();
+      setStatus(initialStatus);
     </script>
   </body>
 </html>
