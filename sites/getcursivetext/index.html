@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GetCursiveText Backlink Copy 100</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f1e8;
+        --panel: #fffdf8;
+        --line: #d8cfbf;
+        --text: #2a2118;
+        --muted: #726252;
+        --link: #8e2c27;
+        --code-bg: #f3ede2;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Georgia", "Times New Roman", serif;
+        background:
+          radial-gradient(circle at top left, #fff7ea 0, transparent 28%),
+          linear-gradient(180deg, #f7f1e6 0%, #efe7da 100%);
+        color: var(--text);
+      }
+
+      main {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 32px 20px 48px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 34px;
+        line-height: 1.1;
+      }
+
+      .breadcrumbs {
+        margin: 0 0 16px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .breadcrumbs a {
+        color: var(--link);
+      }
+
+      p {
+        margin: 0 0 10px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(73, 53, 31, 0.08);
+      }
+
+      .meta {
+        margin: 18px 0 24px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .meta strong {
+        color: var(--text);
+      }
+
+      .table-wrap {
+        overflow: auto;
+      }
+
+      .filter-panel {
+        display: grid;
+        gap: 12px;
+        margin: 0 0 18px;
+      }
+
+      .filter-label {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .filter-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      th,
+      td {
+        vertical-align: top;
+        border: 1px solid var(--line);
+        padding: 14px;
+      }
+
+      th {
+        position: sticky;
+        top: 0;
+        background: #f1e8da;
+        text-align: left;
+        font-size: 14px;
+        letter-spacing: 0.03em;
+      }
+
+      td {
+        background: rgba(255, 253, 248, 0.96);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      code {
+        display: block;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: "SFMono-Regular", "Consolas", monospace;
+        background: var(--code-bg);
+        padding: 10px;
+        border-radius: 10px;
+        color: #3d3026;
+      }
+
+      a {
+        color: var(--link);
+      }
+
+      .keywords {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .keywords span {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: #fbf6ee;
+        color: #4a3a2e;
+        font-size: 13px;
+      }
+
+      .copy-btn {
+        appearance: none;
+        border: 1px solid #b89f86;
+        background: linear-gradient(180deg, #fff9ef 0%, #efe2cf 100%);
+        color: #463226;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 12px;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .copy-btn:hover {
+        border-color: #8e2c27;
+        color: #8e2c27;
+      }
+
+      .filter-btn {
+        appearance: none;
+        border: 1px solid #c7b39e;
+        background: rgba(255, 249, 239, 0.72);
+        color: #5d493b;
+        border-radius: 999px;
+        padding: 9px 14px;
+        font-size: 13px;
+        line-height: 1.2;
+        cursor: pointer;
+        transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+      }
+
+      .filter-btn:hover {
+        border-color: #8e2c27;
+        color: #8e2c27;
+      }
+
+      .filter-btn.is-active {
+        border-color: #8e2c27;
+        background: linear-gradient(180deg, #a53a34 0%, #7e1f1b 100%);
+        color: #fff7ef;
+        box-shadow: 0 8px 18px rgba(126, 31, 27, 0.18);
+      }
+
+      .th-head {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .th-label {
+        font-weight: 700;
+      }
+
+      .cell-actions {
+        margin-top: 10px;
+      }
+
+      .status {
+        margin: 0 0 14px;
+        min-height: 20px;
+        color: #6b4330;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="panel">
+        <p class="breadcrumbs"><a href="../../">返回项目首页</a> / GetCursiveText</p>
+        <h1>GetCursiveText 外链建设文案 100 条</h1>
+        <p>主域名：<a href="https://getcursivetext.com/">https://getcursivetext.com/</a></p>
+        <p>表格共 3 列：纯文本文案源码、带锚文本的 HTML 文案源码、锚文本渲染后的文案。</p>
+        <div class="meta">
+          <p><strong>生成逻辑：</strong>基于项目现有页面标题与 SEO 关键词簇，覆盖工具页、教程页、社媒场景、签名场景、婚礼场景和品牌场景。</p>
+          <div>
+            <strong>已覆盖关键词：</strong>
+            <div class="keywords">
+              <span>cursive text generator</span>
+              <span>letters in cursive</span>
+              <span>cursive practice sheets</span>
+              <span>signature font generator</span>
+              <span>calligraphy font generator</span>
+              <span>wedding cursive font generator</span>
+              <span>tattoo cursive font generator</span>
+              <span>instagram cursive font generator</span>
+              <span>logo cursive font generator</span>
+              <span>name cursive font generator</span>
+            </div>
+          </div>
+        </div>
+        <div class="filter-panel">
+          <div class="filter-label">关键词过滤</div>
+          <div class="filter-controls" id="filter-controls"></div>
+        </div>
+        <p class="status" id="status">点击任意复制按钮即可复制对应文案。</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  <div class="th-head">
+                    <span class="th-label">纯文本文案源码</span>
+                    <button class="copy-btn" type="button" data-random-column="plain">随机复制本列</button>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-head">
+                    <span class="th-label">带有锚文本文案源码</span>
+                    <button class="copy-btn" type="button" data-random-column="anchor">随机复制本列</button>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-head">
+                    <span class="th-label">锚文本渲染后文案</span>
+                    <button class="copy-btn" type="button" data-random-column="rendered">随机复制本列</button>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const leads = [
+        "If readers want a faster way to test script styling, try",
+        "For anyone comparing handwriting tools, I would add",
+        "If you need a practical option for social graphics, check",
+        "One resource I keep bookmarked for lettering drafts is",
+        "A useful page to add here is",
+        "If the goal is quick copy-ready text, start with",
+        "For worksheets, names, and decorative headers, review",
+        "When I need to check readability before final design, I use",
+        "This is also worth mentioning for people who want editable text and image export:",
+        "For creators testing script styles across use cases, see"
+      ];
+
+      const keywords = [
+        {
+          anchor: "cursive text generator",
+          url: "https://getcursivetext.com/cursive-text-generator",
+          benefit: "It gives instant style previews, copy and paste output, and transparent PNG export."
+        },
+        {
+          anchor: "letters in cursive",
+          url: "https://getcursivetext.com/letters-in-cursive",
+          benefit: "It helps with alphabet forms, initials, numbers, and quick handwriting references on one page."
+        },
+        {
+          anchor: "cursive practice sheets",
+          url: "https://getcursivetext.com/cursive-practice-sheets",
+          benefit: "It makes printable handwriting worksheets for alphabet drills, classroom work, and name tracing."
+        },
+        {
+          anchor: "signature font generator",
+          url: "https://getcursivetext.com/signature-font-generator",
+          benefit: "It is useful for email signatures, watermark drafts, document stamps, and handwritten name marks."
+        },
+        {
+          anchor: "calligraphy font generator",
+          url: "https://getcursivetext.com/calligraphy-font-generator",
+          benefit: "It works well for invitations, labels, logos, and decorative lettering with calligraphy-style controls."
+        },
+        {
+          anchor: "wedding cursive font generator",
+          url: "https://getcursivetext.com/wedding-cursive-font-generator",
+          benefit: "It is tailored for save the dates, couple names, elegant invitation headers, and wedding signage."
+        },
+        {
+          anchor: "tattoo cursive font generator",
+          url: "https://getcursivetext.com/tattoo-cursive-font-generator",
+          benefit: "It is handy for previewing names and short quotes before committing to tattoo lettering."
+        },
+        {
+          anchor: "instagram cursive font generator",
+          url: "https://getcursivetext.com/instagram-cursive-font-generator",
+          benefit: "It creates bio fonts and copy-paste cursive text for captions, stories, and usernames."
+        },
+        {
+          anchor: "logo cursive font generator",
+          url: "https://getcursivetext.com/logo-cursive-font-generator",
+          benefit: "It helps test brand-name scripts, packaging looks, and fast logo mockups."
+        },
+        {
+          anchor: "name cursive font generator",
+          url: "https://getcursivetext.com/name-cursive-font-generator",
+          benefit: "It is a good fit for profile names, creator tags, stickers, and personalized signature ideas."
+        }
+      ];
+
+      const entries = leads.flatMap((lead) =>
+        keywords.map((item) => ({
+          keyword: item.anchor,
+          url: item.url,
+          plain: `${lead} ${item.anchor}: ${item.url} ${item.benefit}`,
+          anchor: `${lead} <a href="${item.url}">${item.anchor}</a>. ${item.benefit}`,
+          rendered: `${lead} ${item.anchor}. ${item.benefit}`
+        }))
+      );
+
+      const rows = document.getElementById("rows");
+      const filterControls = document.getElementById("filter-controls");
+      const status = document.getElementById("status");
+      const initialStatus = "点击任意复制按钮即可复制对应文案。";
+      let activeKeyword = "all";
+      const randomState = {
+        plain: { order: [], cursor: 0 },
+        anchor: { order: [], cursor: 0 },
+        rendered: { order: [], cursor: 0 }
+      };
+
+      function escapeHtml(value) {
+        return value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      }
+
+      function setStatus(message = initialStatus) {
+        status.textContent = message;
+      }
+
+      function getFilteredEntries() {
+        if (activeKeyword === "all") {
+          return entries;
+        }
+
+        return entries.filter((entry) => entry.keyword === activeKeyword);
+      }
+
+      function getActiveFilterLabel() {
+        return activeKeyword === "all" ? "全部" : activeKeyword;
+      }
+
+      function getFilterSummary() {
+        return `当前筛选：${getActiveFilterLabel()}（${getFilteredEntries().length} 条）`;
+      }
+
+      function resetRandomState() {
+        for (const column of Object.keys(randomState)) {
+          randomState[column].order = [];
+          randomState[column].cursor = 0;
+        }
+      }
+
+      async function copyText(text, message) {
+        try {
+          await navigator.clipboard.writeText(text);
+          setStatus(message);
+        } catch (error) {
+          setStatus(`复制失败，请手动复制。${message}`);
+        }
+      }
+
+      function createShuffledIndexes(length) {
+        const order = Array.from({ length }, (_, index) => index);
+
+        for (let index = order.length - 1; index > 0; index -= 1) {
+          const swapIndex = Math.floor(Math.random() * (index + 1));
+          [order[index], order[swapIndex]] = [order[swapIndex], order[index]];
+        }
+
+        return order;
+      }
+
+      function getNextRandomText(column) {
+        const bucket = getFilteredEntries().map((entry) => entry[column]);
+        const state = randomState[column];
+
+        if (!bucket.length) {
+          return "";
+        }
+
+        if (state.order.length !== bucket.length || state.cursor >= state.order.length) {
+          const previousIndex =
+            state.order.length && state.cursor > 0 ? state.order[state.cursor - 1] : null;
+
+          state.order = createShuffledIndexes(bucket.length);
+          state.cursor = 0;
+
+          if (bucket.length > 1 && previousIndex !== null && state.order[0] === previousIndex) {
+            [state.order[0], state.order[1]] = [state.order[1], state.order[0]];
+          }
+        }
+
+        const itemIndex = state.order[state.cursor];
+        state.cursor += 1;
+        return bucket[itemIndex];
+      }
+
+      function renderFilterControls() {
+        filterControls.innerHTML = `
+          <button class="filter-btn ${activeKeyword === "all" ? "is-active" : ""}" type="button" data-filter-keyword="all">全部</button>
+          ${keywords
+            .map(
+              (item) => `
+                <button
+                  class="filter-btn ${activeKeyword === item.anchor ? "is-active" : ""}"
+                  type="button"
+                  data-filter-keyword="${escapeHtml(item.anchor)}"
+                >${escapeHtml(item.anchor)}</button>
+              `
+            )
+            .join("")}
+        `;
+      }
+
+      function renderRows() {
+        rows.innerHTML = getFilteredEntries()
+          .map(
+            (entry) => `
+            <td>
+              <code>${escapeHtml(entry.plain)}</code>
+              <div class="cell-actions">
+                <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.plain)}" data-label="纯文本源码">复制本条</button>
+              </div>
+            </td>
+            <td>
+              <code>${escapeHtml(entry.anchor)}</code>
+              <div class="cell-actions">
+                <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.anchor)}" data-label="锚文本文案源码">复制本条</button>
+              </div>
+            </td>
+            <td>
+              <div>${entry.anchor}</div>
+              <div class="cell-actions">
+                <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.rendered)}" data-label="渲染后文案">复制本条</button>
+              </div>
+            </td>
+          `
+          )
+          .map((cells) => `<tr>${cells}</tr>`)
+          .join("");
+      }
+
+      function setActiveKeyword(keyword, { announce = true } = {}) {
+        activeKeyword = keyword;
+        resetRandomState();
+        renderFilterControls();
+        renderRows();
+
+        if (announce) {
+          setStatus(getFilterSummary());
+        }
+      }
+
+      rows.addEventListener("click", async (event) => {
+        const button = event.target.closest("[data-copy]");
+        if (!button) {
+          return;
+        }
+
+        const count = getFilteredEntries().length;
+        await copyText(
+          button.getAttribute("data-copy"),
+          `已复制: ${button.getAttribute("data-label")}（当前筛选：${getActiveFilterLabel()}，${count} 条）`
+        );
+      });
+
+      filterControls.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-filter-keyword]");
+        if (!button) {
+          return;
+        }
+
+        const keyword = button.getAttribute("data-filter-keyword");
+        if (keyword === activeKeyword) {
+          return;
+        }
+
+        setActiveKeyword(keyword);
+      });
+
+      document.addEventListener("click", async (event) => {
+        const button = event.target.closest("[data-random-column]");
+        if (!button) {
+          return;
+        }
+
+        const column = button.getAttribute("data-random-column");
+        const randomText = getNextRandomText(column);
+        const count = getFilteredEntries().length;
+        const labels = {
+          plain: "随机纯文本源码",
+          anchor: "随机锚文本文案源码",
+          rendered: "随机渲染后文案"
+        };
+
+        await copyText(
+          randomText,
+          `已复制: ${labels[column]}（当前筛选：${getActiveFilterLabel()}，${count} 条）`
+        );
+      });
+
+      renderFilterControls();
+      renderRows();
+      setStatus(initialStatus);
+    </script>
+  </body>
+</html>
