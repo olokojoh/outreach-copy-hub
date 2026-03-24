@@ -228,7 +228,7 @@
         <p class="breadcrumbs"><a href="../../">返回项目首页</a> / GetCursiveText</p>
         <h1>GetCursiveText 外链建设文案 100 条</h1>
         <p>主域名：<a href="https://getcursivetext.com/">https://getcursivetext.com/</a></p>
-        <p>表格共 3 列：纯文本文案源码、带锚文本的 HTML 文案源码、锚文本渲染后的文案。</p>
+        <p>表格共 4 列：纯文本文案源码、带锚文本的 HTML 文案源码、锚文本渲染后的文案，以及面向富文本评论器的粘贴版文案。</p>
         <div class="meta">
           <p><strong>生成逻辑：</strong>基于项目现有页面标题与 SEO 关键词簇，覆盖工具页、教程页、社媒场景、签名场景、婚礼场景和品牌场景。</p>
           <div>
@@ -272,6 +272,12 @@
                   <div class="th-head">
                     <span class="th-label">锚文本渲染后文案</span>
                     <button class="copy-btn" type="button" data-random-column="rendered">随机复制本列</button>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-head">
+                    <span class="th-label">富文本评论器文案</span>
+                    <button class="copy-btn" type="button" data-random-column="rich">随机复制本列</button>
                   </div>
                 </th>
               </tr>
@@ -355,7 +361,9 @@
           url: item.url,
           plain: `${lead} ${item.anchor}: ${item.url} ${item.benefit}`,
           anchor: `${lead} <a href="${item.url}">${item.anchor}</a>. ${item.benefit}`,
-          rendered: `${lead} ${item.anchor}. ${item.benefit}`
+          rendered: `${lead} ${item.anchor}. ${item.benefit}`,
+          richText: `${lead} ${item.anchor}. ${item.benefit}`,
+          richHtml: `${escapeHtml(lead)} <a href="${item.url}">${escapeHtml(item.anchor)}</a>. ${escapeHtml(item.benefit)}`
         }))
       );
 
@@ -367,7 +375,8 @@
       const randomState = {
         plain: { order: [], cursor: 0 },
         anchor: { order: [], cursor: 0 },
-        rendered: { order: [], cursor: 0 }
+        rendered: { order: [], cursor: 0 },
+        rich: { order: [], cursor: 0 }
       };
 
       function escapeHtml(value) {
@@ -414,6 +423,28 @@
         }
       }
 
+      async function copyRichText(html, plainText, message) {
+        try {
+          if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+            const item = new ClipboardItem({
+              "text/html": new Blob([html], { type: "text/html" }),
+              "text/plain": new Blob([plainText], { type: "text/plain" })
+            });
+            await navigator.clipboard.write([item]);
+          } else {
+            await navigator.clipboard.writeText(plainText);
+          }
+          setStatus(message);
+        } catch (error) {
+          try {
+            await navigator.clipboard.writeText(plainText);
+            setStatus(`${message}（已回退为纯文本复制）`);
+          } catch (fallbackError) {
+            setStatus(`复制失败，请手动复制。${message}`);
+          }
+        }
+      }
+
       function createShuffledIndexes(length) {
         const order = Array.from({ length }, (_, index) => index);
 
@@ -425,12 +456,12 @@
         return order;
       }
 
-      function getNextRandomText(column) {
-        const bucket = getFilteredEntries().map((entry) => entry[column]);
+      function getNextRandomEntry(column) {
+        const bucket = getFilteredEntries();
         const state = randomState[column];
 
         if (!bucket.length) {
-          return "";
+          return null;
         }
 
         if (state.order.length !== bucket.length || state.cursor >= state.order.length) {
@@ -489,6 +520,18 @@
                 <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.rendered)}" data-label="渲染后文案">复制本条</button>
               </div>
             </td>
+            <td>
+              <div>${entry.anchor}</div>
+              <div class="cell-actions">
+                <button
+                  class="copy-btn"
+                  type="button"
+                  data-copy-rich-html="${escapeHtml(entry.richHtml)}"
+                  data-copy-rich-text="${escapeHtml(entry.richText)}"
+                  data-label="富文本评论器文案"
+                >复制本条</button>
+              </div>
+            </td>
           `
           )
           .map((cells) => `<tr>${cells}</tr>`)
@@ -507,6 +550,17 @@
       }
 
       rows.addEventListener("click", async (event) => {
+        const richButton = event.target.closest("[data-copy-rich-html]");
+        if (richButton) {
+          const count = getFilteredEntries().length;
+          await copyRichText(
+            richButton.getAttribute("data-copy-rich-html"),
+            richButton.getAttribute("data-copy-rich-text"),
+            `已复制: ${richButton.getAttribute("data-label")}（当前筛选：${getActiveFilterLabel()}，${count} 条）`
+          );
+          return;
+        }
+
         const button = event.target.closest("[data-copy]");
         if (!button) {
           return;
@@ -540,16 +594,30 @@
         }
 
         const column = button.getAttribute("data-random-column");
-        const randomText = getNextRandomText(column);
+        const randomEntry = getNextRandomEntry(column);
         const count = getFilteredEntries().length;
         const labels = {
           plain: "随机纯文本源码",
           anchor: "随机锚文本文案源码",
-          rendered: "随机渲染后文案"
+          rendered: "随机渲染后文案",
+          rich: "随机富文本评论器文案"
         };
 
+        if (!randomEntry) {
+          return;
+        }
+
+        if (column === "rich") {
+          await copyRichText(
+            randomEntry.richHtml,
+            randomEntry.richText,
+            `已复制: ${labels[column]}（当前筛选：${getActiveFilterLabel()}，${count} 条）`
+          );
+          return;
+        }
+
         await copyText(
-          randomText,
+          randomEntry[column],
           `已复制: ${labels[column]}（当前筛选：${getActiveFilterLabel()}，${count} 条）`
         );
       });

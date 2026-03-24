@@ -228,6 +228,12 @@
                     <button class="copy-btn" type="button" data-random-column="rendered">随机复制本列</button>
                   </div>
                 </th>
+                <th>
+                  <div class="th-head">
+                    <span class="th-label">富文本评论器文案</span>
+                    <button class="copy-btn" type="button" data-random-column="rich">随机复制本列</button>
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody id="rows"></tbody>
@@ -269,7 +275,9 @@
         angles.map((angle) => ({
           plain: `${lead} ${keyword}: ${targetUrl} ${angle}`,
           anchor: `${lead} <a href="${targetUrl}">${keyword}</a>。${angle}`,
-          rendered: `${lead} ${keyword}。${angle}`
+          rendered: `${lead} ${keyword}。${angle}`,
+          richText: `${lead} ${keyword}。${angle}`,
+          richHtml: `${escapeHtml(lead)} <a href="${targetUrl}">${escapeHtml(keyword)}</a>。${escapeHtml(angle)}`
         }))
       );
 
@@ -279,7 +287,8 @@
       const randomState = {
         plain: { order: [], cursor: 0 },
         anchor: { order: [], cursor: 0 },
-        rendered: { order: [], cursor: 0 }
+        rendered: { order: [], cursor: 0 },
+        rich: { order: [], cursor: 0 }
       };
 
       function escapeHtml(value) {
@@ -303,6 +312,28 @@
         }
       }
 
+      async function copyRichText(html, plainText, message) {
+        try {
+          if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+            const item = new ClipboardItem({
+              "text/html": new Blob([html], { type: "text/html" }),
+              "text/plain": new Blob([plainText], { type: "text/plain" })
+            });
+            await navigator.clipboard.write([item]);
+          } else {
+            await navigator.clipboard.writeText(plainText);
+          }
+          setStatus(message);
+        } catch (error) {
+          try {
+            await navigator.clipboard.writeText(plainText);
+            setStatus(`${message}（已回退为纯文本复制）`);
+          } catch (fallbackError) {
+            setStatus(`复制失败，请手动复制。${message}`);
+          }
+        }
+      }
+
       function createShuffledIndexes(length) {
         const order = Array.from({ length }, (_, index) => index);
 
@@ -314,12 +345,12 @@
         return order;
       }
 
-      function getNextRandomText(column) {
-        const bucket = entries.map((entry) => entry[column]);
+      function getNextRandomEntry(column) {
+        const bucket = entries;
         const state = randomState[column];
 
         if (!bucket.length) {
-          return "";
+          return null;
         }
 
         if (state.order.length !== bucket.length || state.cursor >= state.order.length) {
@@ -361,6 +392,18 @@
                 <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.rendered)}" data-label="渲染后文案">复制本条</button>
               </div>
             </td>
+            <td>
+              <div>${entry.anchor}</div>
+              <div class="cell-actions">
+                <button
+                  class="copy-btn"
+                  type="button"
+                  data-copy-rich-html="${escapeHtml(entry.richHtml)}"
+                  data-copy-rich-text="${escapeHtml(entry.richText)}"
+                  data-label="富文本评论器文案"
+                >复制本条</button>
+              </div>
+            </td>
           `
           )
           .map((cells) => `<tr>${cells}</tr>`)
@@ -368,6 +411,16 @@
       }
 
       rows.addEventListener("click", async (event) => {
+        const richButton = event.target.closest("[data-copy-rich-html]");
+        if (richButton) {
+          await copyRichText(
+            richButton.getAttribute("data-copy-rich-html"),
+            richButton.getAttribute("data-copy-rich-text"),
+            `已复制: ${richButton.getAttribute("data-label")}（リヨン首页，${entries.length} 条）`
+          );
+          return;
+        }
+
         const button = event.target.closest("[data-copy]");
         if (!button) {
           return;
@@ -386,14 +439,28 @@
         }
 
         const column = button.getAttribute("data-random-column");
-        const randomText = getNextRandomText(column);
+        const randomEntry = getNextRandomEntry(column);
         const labels = {
           plain: "随机纯文本源码",
           anchor: "随机锚文本文案源码",
-          rendered: "随机渲染后文案"
+          rendered: "随机渲染后文案",
+          rich: "随机富文本评论器文案"
         };
 
-        await copyText(randomText, `已复制: ${labels[column]}（リヨン首页，${entries.length} 条）`);
+        if (!randomEntry) {
+          return;
+        }
+
+        if (column === "rich") {
+          await copyRichText(
+            randomEntry.richHtml,
+            randomEntry.richText,
+            `已复制: ${labels[column]}（リヨン首页，${entries.length} 条）`
+          );
+          return;
+        }
+
+        await copyText(randomEntry[column], `已复制: ${labels[column]}（リヨン首页，${entries.length} 条）`);
       });
 
       renderRows();
