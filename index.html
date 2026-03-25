@@ -13,7 +13,6 @@
         --text: #2a2118;
         --muted: #726252;
         --link: #8e2c27;
-        --accent: #7e1f1b;
       }
 
       * {
@@ -33,6 +32,37 @@
         max-width: 1200px;
         margin: 0 auto;
         padding: 36px 20px 48px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 14px;
+      }
+
+      .lang-switch {
+        display: inline-flex;
+        gap: 8px;
+        padding: 6px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 251, 244, 0.88);
+      }
+
+      .lang-btn {
+        appearance: none;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        background: transparent;
+        color: #5d493b;
+        padding: 8px 12px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .lang-btn.is-active {
+        background: linear-gradient(180deg, #a53a34 0%, #7e1f1b 100%);
+        color: #fff7ef;
       }
 
       .hero,
@@ -146,57 +176,151 @@
   </head>
   <body>
     <main>
+      <div class="topbar">
+        <div class="lang-switch" aria-label="Language switcher">
+          <button class="lang-btn" type="button" data-lang="zh">中文</button>
+          <button class="lang-btn" type="button" data-lang="en">English</button>
+        </div>
+      </div>
+
       <section class="hero">
         <div class="summary">
-          <h1>Outreach Copy Hub</h1>
-          <p>这是一个面向多个网站的外链建设工作台。每个网站都拥有独立的子页面，承载该站点的关键词过滤、随机复制、锚文本源码和渲染后文案。</p>
-          <p>后续新增项目时，按同样方式增加一个子目录页面，并在首页补一个入口卡片即可。当前已经接入字体工具站与日语里昂旅行站两个模块。</p>
+          <h1 id="hero-title">Outreach Copy Hub</h1>
+          <p id="hero-body-1"></p>
+          <p id="hero-body-2"></p>
         </div>
       </section>
 
       <section class="panel">
         <div class="section-head">
-          <h2>网站项目入口</h2>
-          <p class="section-note">当前已接入 2 个站点</p>
+          <h2 id="section-title"></h2>
+          <p class="section-note" id="section-note"></p>
         </div>
 
         <div class="grid">
           <article class="card">
             <h3>GetCursiveText</h3>
-            <p>针对 `https://getcursivetext.com/` 的外链建设子页面，已内置 10 个 SEO 关键词筛选与 100 条文案。</p>
+            <p id="card-getcursive-desc"></p>
             <div class="meta">
-              <div>站点：<a href="https://getcursivetext.com/">https://getcursivetext.com/</a></div>
-              <div>入口：<a href="./sites/getcursivetext/">/sites/getcursivetext/</a></div>
+              <div><span id="site-label-1"></span><a href="https://getcursivetext.com/">https://getcursivetext.com/</a></div>
+              <div><span id="entry-label-1"></span><a href="./sites/getcursivetext/">/sites/getcursivetext/</a></div>
             </div>
             <div class="badge-row">
-              <span class="badge">10 个关键词</span>
-              <span class="badge">100 条文案</span>
-              <span class="badge">关键词过滤</span>
-              <span class="badge">随机复制</span>
+              <span class="badge" id="badge-getcursive-1"></span>
+              <span class="badge" id="badge-getcursive-2"></span>
+              <span class="badge" id="badge-getcursive-3"></span>
+              <span class="badge" id="badge-getcursive-4"></span>
             </div>
             <div style="margin-top: 18px">
-              <a class="primary-link" href="./sites/getcursivetext/">进入外链建设页</a>
+              <a class="primary-link" href="./sites/getcursivetext/" id="cta-getcursive"></a>
             </div>
           </article>
+
           <article class="card">
             <h3>リヨン完全ガイド</h3>
-            <p>针对 `https://xn--cekd2a.net/` 首页的外链建设子页面，当前只服务首页 `/`，并围绕主 SEO 词 `リヨン` 生成 100 条文案。</p>
+            <p id="card-lyon-desc"></p>
             <div class="meta">
-              <div>站点：<a href="https://xn--cekd2a.net/">https://xn--cekd2a.net/</a></div>
-              <div>入口：<a href="./sites/lyon-guide/">/sites/lyon-guide/</a></div>
+              <div><span id="site-label-2"></span><a href="https://xn--cekd2a.net/">https://xn--cekd2a.net/</a></div>
+              <div><span id="entry-label-2"></span><a href="./sites/lyon-guide/">/sites/lyon-guide/</a></div>
             </div>
             <div class="badge-row">
-              <span class="badge">首页专用</span>
-              <span class="badge">关键词 リヨン</span>
-              <span class="badge">100 条文案</span>
-              <span class="badge">随机复制</span>
+              <span class="badge" id="badge-lyon-1"></span>
+              <span class="badge" id="badge-lyon-2"></span>
+              <span class="badge" id="badge-lyon-3"></span>
+              <span class="badge" id="badge-lyon-4"></span>
             </div>
             <div style="margin-top: 18px">
-              <a class="primary-link" href="./sites/lyon-guide/">进入外链建设页</a>
+              <a class="primary-link" href="./sites/lyon-guide/" id="cta-lyon"></a>
             </div>
           </article>
         </div>
       </section>
     </main>
+
+    <script>
+      const STORAGE_KEY = "outreach-copy-hub-language";
+      const translations = {
+        zh: {
+          title: "Outreach Copy Hub",
+          hero1:
+            "这是一个面向多个网站的外链建设工作台。每个网站都拥有独立的子页面，承载该站点的关键词过滤、随机复制、锚文本源码和渲染后文案。",
+          hero2:
+            "后续新增项目时，按同样方式增加一个子目录页面，并在首页补一个入口卡片即可。当前已经接入字体工具站与日语里昂旅行站两个模块。",
+          sectionTitle: "网站项目入口",
+          sectionNote: "当前已接入 2 个站点",
+          siteLabel: "站点：",
+          entryLabel: "入口：",
+          getcursiveDesc:
+            "针对 `https://getcursivetext.com/` 的外链建设子页面，已内置 10 个 SEO 关键词筛选与 100 条文案。",
+          getcursiveBadges: ["10 个关键词", "100 条文案", "关键词过滤", "随机复制"],
+          getcursiveCta: "进入外链建设页",
+          lyonDesc:
+            "针对 `https://xn--cekd2a.net/` 首页的外链建设子页面，当前只服务首页 `/`，并围绕主 SEO 词 `リヨン` 生成 100 条文案。",
+          lyonBadges: ["首页专用", "关键词 リヨン", "100 条文案", "随机复制"],
+          lyonCta: "进入外链建设页",
+        },
+        en: {
+          title: "Outreach Copy Hub",
+          hero1:
+            "This is a multi-site outreach copy workspace. Each website has its own subpage with keyword filtering, random copy actions, anchor-source snippets, and rendered copy variants.",
+          hero2:
+            "When you add another project later, follow the same pattern: create a new subdirectory page and add one more entry card on this homepage. The hub currently includes a font-tool site and a Japanese Lyon travel site.",
+          sectionTitle: "Project Entrypoints",
+          sectionNote: "2 sites currently connected",
+          siteLabel: "Site: ",
+          entryLabel: "Entry: ",
+          getcursiveDesc:
+            "A dedicated outreach subpage for `https://getcursivetext.com/`, with 10 SEO keyword filters and 100 copy variants built in.",
+          getcursiveBadges: ["10 keywords", "100 copy lines", "Keyword filter", "Random copy"],
+          getcursiveCta: "Open outreach page",
+          lyonDesc:
+            "A dedicated outreach subpage for the homepage of `https://xn--cekd2a.net/`, focused only on `/` and built around the core SEO term `リヨン` with 100 copy variants.",
+          lyonBadges: ["Homepage only", "Keyword リヨン", "100 copy lines", "Random copy"],
+          lyonCta: "Open outreach page",
+        },
+      };
+
+      function getSavedLanguage() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved === "en" ? "en" : "zh";
+      }
+
+      function setActiveLanguage(lang) {
+        const copy = translations[lang];
+        document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
+        document.title = copy.title;
+        document.getElementById("hero-title").textContent = copy.title;
+        document.getElementById("hero-body-1").textContent = copy.hero1;
+        document.getElementById("hero-body-2").textContent = copy.hero2;
+        document.getElementById("section-title").textContent = copy.sectionTitle;
+        document.getElementById("section-note").textContent = copy.sectionNote;
+        document.getElementById("site-label-1").textContent = copy.siteLabel;
+        document.getElementById("entry-label-1").textContent = copy.entryLabel;
+        document.getElementById("site-label-2").textContent = copy.siteLabel;
+        document.getElementById("entry-label-2").textContent = copy.entryLabel;
+        document.getElementById("card-getcursive-desc").textContent = copy.getcursiveDesc;
+        document.getElementById("card-lyon-desc").textContent = copy.lyonDesc;
+        document.getElementById("cta-getcursive").textContent = copy.getcursiveCta;
+        document.getElementById("cta-lyon").textContent = copy.lyonCta;
+
+        copy.getcursiveBadges.forEach((badge, index) => {
+          document.getElementById(`badge-getcursive-${index + 1}`).textContent = badge;
+        });
+        copy.lyonBadges.forEach((badge, index) => {
+          document.getElementById(`badge-lyon-${index + 1}`).textContent = badge;
+        });
+
+        document.querySelectorAll("[data-lang]").forEach((button) => {
+          button.classList.toggle("is-active", button.getAttribute("data-lang") === lang);
+        });
+        localStorage.setItem(STORAGE_KEY, lang);
+      }
+
+      document.querySelectorAll("[data-lang]").forEach((button) => {
+        button.addEventListener("click", () => setActiveLanguage(button.getAttribute("data-lang")));
+      });
+
+      setActiveLanguage(getSavedLanguage());
+    </script>
   </body>
 </html>

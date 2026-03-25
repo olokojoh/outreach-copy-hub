@@ -30,9 +30,40 @@
       }
 
       main {
-        max-width: 1600px;
+        max-width: 1680px;
         margin: 0 auto;
         padding: 32px 20px 48px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 14px;
+      }
+
+      .lang-switch {
+        display: inline-flex;
+        gap: 8px;
+        padding: 6px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 251, 244, 0.88);
+      }
+
+      .lang-btn {
+        appearance: none;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        background: transparent;
+        color: #5d493b;
+        padding: 8px 12px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .lang-btn.is-active {
+        background: linear-gradient(180deg, #a53a34 0%, #7e1f1b 100%);
+        color: #fff7ef;
       }
 
       h1 {
@@ -181,57 +212,56 @@
   </head>
   <body>
     <main>
+      <div class="topbar">
+        <div class="lang-switch" aria-label="Language switcher">
+          <button class="lang-btn" type="button" data-lang="zh">中文</button>
+          <button class="lang-btn" type="button" data-lang="en">English</button>
+        </div>
+      </div>
+
       <section class="panel">
-        <p class="breadcrumbs"><a href="../../">返回项目首页</a> / リヨン完全ガイド</p>
-        <h1>リヨン完全ガイド 首页外链建设文案 100 条</h1>
-        <p>目标首页：<a href="https://xn--cekd2a.net/">https://xn--cekd2a.net/</a></p>
-        <p>本页只服务首页 `/`，只围绕主 SEO 词 `リヨン` 生成外链文案，不混入酒店、机场、美食或路线内页链接。</p>
+        <p class="breadcrumbs"><a href="../../" id="breadcrumbs-home"></a> / <span id="site-name-inline">リヨン完全ガイド</span></p>
+        <h1 id="page-title"></h1>
+        <p><span id="target-label"></span><a href="https://xn--cekd2a.net/">https://xn--cekd2a.net/</a></p>
+        <p id="page-summary"></p>
         <div class="meta">
-          <p><strong>生成依据：</strong>基于 `lyon_web/docs/PROJECT_CONTEXT.md`、`docs/SEO_KEYWORD_TABLE.md` 和首页内容源整理，文案主题集中在里昂城市总览、世界遗产旧市街、治安感知、旅行基础判断与站内分流。</p>
+          <p id="meta-description"></p>
           <div>
-            <strong>当前锚词：</strong>
-            <div class="keywords">
-              <span>リヨン</span>
-            </div>
+            <strong id="keyword-label"></strong>
+            <div class="keywords" id="keyword-chips"></div>
           </div>
           <div>
-            <strong>首页意图标签：</strong>
-            <div class="keywords">
-              <span>城市入口</span>
-              <span>世界遗产</span>
-              <span>治安判断</span>
-              <span>旅行基础</span>
-              <span>站内分流</span>
-            </div>
+            <strong id="intent-label"></strong>
+            <div class="keywords" id="intent-chips"></div>
           </div>
         </div>
-        <p class="status" id="status">点击任意复制按钮即可复制对应文案。</p>
+        <p class="status" id="status"></p>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
                 <th>
                   <div class="th-head">
-                    <span class="th-label">纯文本文案源码</span>
-                    <button class="copy-btn" type="button" data-random-column="plain">随机复制本列</button>
+                    <span class="th-label" id="th-plain"></span>
+                    <button class="copy-btn" type="button" data-random-column="plain" id="random-plain"></button>
                   </div>
                 </th>
                 <th>
                   <div class="th-head">
-                    <span class="th-label">带有锚文本文案源码</span>
-                    <button class="copy-btn" type="button" data-random-column="anchor">随机复制本列</button>
+                    <span class="th-label" id="th-anchor"></span>
+                    <button class="copy-btn" type="button" data-random-column="anchor" id="random-anchor"></button>
                   </div>
                 </th>
                 <th>
                   <div class="th-head">
-                    <span class="th-label">锚文本渲染后文案</span>
-                    <button class="copy-btn" type="button" data-random-column="rendered">随机复制本列</button>
+                    <span class="th-label" id="th-rendered"></span>
+                    <button class="copy-btn" type="button" data-random-column="rendered" id="random-rendered"></button>
                   </div>
                 </th>
                 <th>
                   <div class="th-head">
-                    <span class="th-label">富文本评论器文案</span>
-                    <button class="copy-btn" type="button" data-random-column="rich">随机复制本列</button>
+                    <span class="th-label" id="th-rich"></span>
+                    <button class="copy-btn" type="button" data-random-column="rich" id="random-rich"></button>
                   </div>
                 </th>
               </tr>
@@ -243,47 +273,142 @@
     </main>
 
     <script>
+      const STORAGE_KEY = "outreach-copy-hub-language";
       const targetUrl = "https://xn--cekd2a.net/";
-      const keyword = "リヨン";
-      const openers = [
-        "リヨン旅行の全体像を最初に把握したい人に向いているのが",
-        "フランスの地方都市を比較している読者へ先に見せたい入口として使いやすいのが",
-        "初回のリヨン旅行で街の輪郭をつかみたいなら、まず開いておきたいのが",
-        "里昂という都市がどんな旅先かを短時間で理解したい時に便利なのが",
-        "世界遺産の旧市街や街歩きの雰囲気を含めてリヨンを俯瞰したいなら、入口として役立つのが",
-        "ホテルや空港ページへ入る前に、まず街全体の判断軸をつかむ導入としておすすめなのが",
-        "旅行前にリヨンの印象、治安感覚、滞在日数の目安をまとめて確認するなら見ておきたいのが",
-        "パリの次にどの都市へ行くか迷っている人へ、候補比較の入口として紹介しやすいのが",
-        "リヨン観光の出発点になる総合ページとして自然に案内しやすいのが",
-        "駅名やサッカーではなく、フランスの都市リヨンの旅行情報へ正しく誘導したい時に使いやすいのが"
-      ];
-
-      const angles = [
-        "世界遺産の旧市街、街の雰囲気、治安の考え方、滞在日数の目安を日本語でまとめていて、最初の判断がしやすいです。",
-        "ホーム上で街の概要をつかんだ後、そのままホテル、空港、市内到着、グルメ、モデルコースに分岐できます。",
-        "フランスの都市としてのリヨンを扱っていて、Gare de Lyon やサッカー関連と混同しない導線が明確です。",
-        "旧市街、Fourviere、Presqu'ile、Croix-Rousse など、初回旅行で押さえるべき街区の輪郭が入り口で整理されています。",
-        "パリからの移動を考える人にも使いやすく、まず都市理解をした上で個別の交通判断ページへ進める構成です。",
-        "観光だけでなく、食文化、宿泊判断、空港アクセスまでを含めた旅行全体の入口として機能します。",
-        "リヨンが“どんな街か”を先に理解してから細かいページへ進めるので、旅行計画の迷いを減らしやすいです。",
-        "日语读者向けに整理された総合ガイドなので、初めての里昂旅行でも必要なテーマへ迷わず移動できます。",
-        "世界遺産、街歩き、美食、到着動線といった broad intent を一度に受ける首页として紹介しやすいです。",
-        "細かい予約情報に入る前の総論ページとしてちょうどよく、里昂旅行の起点ページとして自然に置けます。"
-      ];
-
-      const entries = openers.flatMap((lead) =>
-        angles.map((angle) => ({
-          plain: `${lead} ${keyword}: ${targetUrl} ${angle}`,
-          anchor: `${lead} <a href="${targetUrl}">${keyword}</a>。${angle}`,
-          rendered: `${lead} ${keyword}。${angle}`,
-          richText: `${lead} ${keyword}。${angle}`,
-          richHtml: `${escapeHtml(lead)} <a href="${targetUrl}">${escapeHtml(keyword)}</a>。${escapeHtml(angle)}`
-        }))
-      );
+      const copyCatalog = {
+        zh: {
+          title: "リヨン完全ガイド 首页外链建设文案 100 条",
+          siteName: "リヨン完全ガイド",
+          breadcrumbsHome: "返回项目首页",
+          targetLabel: "目标首页：",
+          summary: "本页只服务首页 `/`，只围绕主 SEO 词 `リヨン` 生成外链文案，不混入酒店、机场、美食或路线内页链接。",
+          metaDescription:
+            "<strong>生成依据：</strong>基于 `lyon_web/docs/PROJECT_CONTEXT.md`、`docs/SEO_KEYWORD_TABLE.md` 和首页内容源整理，文案主题集中在里昂城市总览、世界遗产旧市街、治安感知、旅行基础判断与站内分流。",
+          keywordLabel: "当前锚词：",
+          keywords: ["リヨン"],
+          intentLabel: "首页意图标签：",
+          intents: ["城市入口", "世界遗产", "治安判断", "旅行基础", "站内分流"],
+          initialStatus: "点击任意复制按钮即可复制对应文案。",
+          tableHeaders: {
+            plain: "纯文本文案源码",
+            anchor: "带有锚文本文案源码",
+            rendered: "锚文本渲染后文案",
+            rich: "富文本评论器文案",
+          },
+          randomButton: "随机复制本列",
+          copyRow: "复制本条",
+          copyLabels: {
+            plain: "纯文本源码",
+            anchor: "锚文本文案源码",
+            rendered: "渲染后文案",
+            rich: "富文本评论器文案",
+          },
+          randomLabels: {
+            plain: "随机纯文本源码",
+            anchor: "随机锚文本文案源码",
+            rendered: "随机渲染后文案",
+            rich: "随机富文本评论器文案",
+          },
+          copySuccess: (label, count) => `已复制: ${label}（リヨン首页，${count} 条）`,
+          copyFallback: (message) => `${message}（已回退为纯文本复制）`,
+          copyFailure: (message) => `复制失败，请手动复制。${message}`,
+          keyword: "リヨン",
+          openers: [
+            "リヨン旅行の全体像を最初に把握したい人に向いているのが",
+            "フランスの地方都市を比較している読者へ先に見せたい入口として使いやすいのが",
+            "初回のリヨン旅行で街の輪郭をつかみたいなら、まず開いておきたいのが",
+            "里昂という都市がどんな旅先かを短時間で理解したい時に便利なのが",
+            "世界遺産の旧市街や街歩きの雰囲気を含めてリヨンを俯瞰したいなら、入口として役立つのが",
+            "ホテルや空港ページへ入る前に、まず街全体の判断軸をつかむ導入としておすすめなのが",
+            "旅行前にリヨンの印象、治安感覚、滞在日数の目安をまとめて確認するなら見ておきたいのが",
+            "パリの次にどの都市へ行くか迷っている人へ、候補比較の入口として紹介しやすいのが",
+            "リヨン観光の出発点になる総合ページとして自然に案内しやすいのが",
+            "駅名やサッカーではなく、フランスの都市リヨンの旅行情報へ正しく誘導したい時に使いやすいのが"
+          ],
+          angles: [
+            "世界遺産の旧市街、街の雰囲気、治安の考え方、滞在日数の目安を日本語でまとめていて、最初の判断がしやすいです。",
+            "ホーム上で街の概要をつかんだ後、そのままホテル、空港、市内到着、グルメ、モデルコースに分岐できます。",
+            "フランスの都市としてのリヨンを扱っていて、Gare de Lyon やサッカー関連と混同しない導線が明確です。",
+            "旧市街、Fourviere、Presqu'ile、Croix-Rousse など、初回旅行で押さえるべき街区の輪郭が入り口で整理されています。",
+            "パリからの移動を考える人にも使いやすく、まず都市理解をした上で個別の交通判断ページへ進める構成です。",
+            "観光だけでなく、食文化、宿泊判断、空港アクセスまでを含めた旅行全体の入口として機能します。",
+            "リヨンが“どんな街か”を先に理解してから細かいページへ進めるので、旅行計画の迷いを減らしやすいです。",
+            "日语读者向けに整理された総合ガイドなので、初めての里昂旅行でも必要なテーマへ迷わず移動できます。",
+            "世界遺産、街歩き、美食、到着動線といった broad intent を一度に受ける首页として紹介しやすいです。",
+            "細かい予約情報に入る前の総論ページとしてちょうどよく、里昂旅行の起点ページとして自然に置けます。"
+          ]
+        },
+        en: {
+          title: "Lyon Complete Guide Homepage Outreach Copy (100)",
+          siteName: "Lyon Complete Guide",
+          breadcrumbsHome: "Back to Hub",
+          targetLabel: "Target homepage: ",
+          summary: "This page is homepage-only. It points only to `/` and generates outreach copy around the homepage intent for Lyon, without mixing hotel, airport, food, or itinerary subpages.",
+          metaDescription:
+            "<strong>Generation basis:</strong> Built from `lyon_web/docs/PROJECT_CONTEXT.md`, `docs/SEO_KEYWORD_TABLE.md`, and the homepage content source. The copy themes stay focused on Lyon as a city entry page, UNESCO old town context, safety framing, travel basics, and internal topic branching.",
+          keywordLabel: "Current anchor term:",
+          keywords: ["Lyon"],
+          intentLabel: "Homepage intent tags:",
+          intents: ["City entry", "UNESCO heritage", "Safety framing", "Travel basics", "Topic branching"],
+          initialStatus: "Click any copy button to copy the corresponding entry.",
+          tableHeaders: {
+            plain: "Plain-Text Source",
+            anchor: "HTML Anchor Source",
+            rendered: "Rendered Anchor Copy",
+            rich: "Rich Text Editor Copy",
+          },
+          randomButton: "Copy Random Entry",
+          copyRow: "Copy This Entry",
+          copyLabels: {
+            plain: "plain-text source",
+            anchor: "HTML anchor source",
+            rendered: "rendered anchor copy",
+            rich: "rich text editor copy",
+          },
+          randomLabels: {
+            plain: "random plain-text source",
+            anchor: "random HTML anchor source",
+            rendered: "random rendered anchor copy",
+            rich: "random rich text editor copy",
+          },
+          copySuccess: (label, count) => `Copied: ${label} (Lyon homepage, ${count} entries)`,
+          copyFallback: (message) => `${message} (fell back to plain-text copy)`,
+          copyFailure: (message) => `Copy failed. Please copy it manually. ${message}`,
+          keyword: "Lyon",
+          openers: [
+            "A useful starting point for anyone who wants to understand Lyon travel at a glance is",
+            "If readers are comparing French regional cities, an easy homepage to surface early is",
+            "For a first Lyon trip, one practical entry page to open before going deeper is",
+            "When someone wants to quickly understand what kind of destination Lyon is, a helpful overview is",
+            "If the goal is to frame Lyon through its UNESCO old town, city atmosphere, and travel basics, a strong entry page is",
+            "Before diving into hotel or airport details, a good homepage to set the overall decision context is",
+            "For travelers who want to sort out Lyon's vibe, safety framing, and ideal stay length before planning, a useful starting page is",
+            "If someone is deciding which city to visit after Paris, a natural comparison entry is",
+            "As a homepage that works well for broad Lyon travel intent, this is easy to recommend:",
+            "If you need to steer readers toward the French city of Lyon, not the station or football context, a clear homepage entry is"
+          ],
+          angles: [
+            "It organizes UNESCO old town context, city atmosphere, safety framing, and ideal stay length in Japanese, which makes the first planning step easier.",
+            "Once readers grasp the city overview, they can branch from the homepage into hotels, airport access, city arrival, food, and itinerary planning.",
+            "It clearly focuses on Lyon as a French city, so it avoids confusion with Gare de Lyon or football-related searches.",
+            "The homepage outlines key areas such as the old town, Fourviere, Presqu'ile, and Croix-Rousse for first-time visitors.",
+            "It also works well for travelers coming from Paris, because it frames the city first and then sends readers into more specific transport decisions.",
+            "The page works as a full trip entry point, not just for sightseeing but also for food, accommodation choices, and airport access.",
+            "It helps readers understand what Lyon is like before they move into narrower planning pages, which reduces travel-planning friction.",
+            "Because it is structured for Japanese-language readers, it works well as a homepage that guides first-time visitors into the right topic next.",
+            "It is easy to cite as a broad-intent homepage for heritage, city walking, food, and arrival logistics in one place.",
+            "It fits naturally as a general overview page before people get into booking details or more tactical travel steps."
+          ]
+        }
+      };
 
       const rows = document.getElementById("rows");
       const status = document.getElementById("status");
-      const initialStatus = "点击任意复制按钮即可复制对应文案。";
+      const keywordChips = document.getElementById("keyword-chips");
+      const intentChips = document.getElementById("intent-chips");
+      const state = {
+        language: "zh"
+      };
       const randomState = {
         plain: { order: [], cursor: 0 },
         anchor: { order: [], cursor: 0 },
@@ -299,7 +424,32 @@
           .replaceAll('"', "&quot;");
       }
 
-      function setStatus(message = initialStatus) {
+      function getSavedLanguage() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved === "en" ? "en" : "zh";
+      }
+
+      function t() {
+        return copyCatalog[state.language];
+      }
+
+      function buildEntries() {
+        return t().openers.flatMap((lead) =>
+          t().angles.map((angle) => ({
+            plain: `${lead} ${t().keyword}: ${targetUrl} ${angle}`,
+            anchor: `${lead} <a href="${targetUrl}">${t().keyword}</a>. ${angle}`,
+            rendered: `${lead} ${t().keyword}. ${angle}`,
+            richText: `${lead} ${t().keyword}. ${angle}`,
+            richHtml: `${escapeHtml(lead)} <a href="${targetUrl}">${escapeHtml(t().keyword)}</a>. ${escapeHtml(angle)}`
+          }))
+        );
+      }
+
+      function getEntries() {
+        return buildEntries();
+      }
+
+      function setStatus(message = t().initialStatus) {
         status.textContent = message;
       }
 
@@ -308,7 +458,7 @@
           await navigator.clipboard.writeText(text);
           setStatus(message);
         } catch (error) {
-          setStatus(`复制失败，请手动复制。${message}`);
+          setStatus(t().copyFailure(message));
         }
       }
 
@@ -327,9 +477,9 @@
         } catch (error) {
           try {
             await navigator.clipboard.writeText(plainText);
-            setStatus(`${message}（已回退为纯文本复制）`);
+            setStatus(t().copyFallback(message));
           } catch (fallbackError) {
-            setStatus(`复制失败，请手动复制。${message}`);
+            setStatus(t().copyFailure(message));
           }
         }
       }
@@ -346,77 +496,128 @@
       }
 
       function getNextRandomEntry(column) {
-        const bucket = entries;
-        const state = randomState[column];
+        const bucket = getEntries();
+        const stateBucket = randomState[column];
 
         if (!bucket.length) {
           return null;
         }
 
-        if (state.order.length !== bucket.length || state.cursor >= state.order.length) {
+        if (stateBucket.order.length !== bucket.length || stateBucket.cursor >= stateBucket.order.length) {
           const previousIndex =
-            state.order.length && state.cursor > 0 ? state.order[state.cursor - 1] : null;
+            stateBucket.order.length && stateBucket.cursor > 0
+              ? stateBucket.order[stateBucket.cursor - 1]
+              : null;
 
-          state.order = createShuffledIndexes(bucket.length);
-          state.cursor = 0;
+          stateBucket.order = createShuffledIndexes(bucket.length);
+          stateBucket.cursor = 0;
 
-          if (bucket.length > 1 && previousIndex !== null && state.order[0] === previousIndex) {
-            [state.order[0], state.order[1]] = [state.order[1], state.order[0]];
+          if (bucket.length > 1 && previousIndex !== null && stateBucket.order[0] === previousIndex) {
+            [stateBucket.order[0], stateBucket.order[1]] = [stateBucket.order[1], stateBucket.order[0]];
           }
         }
 
-        const itemIndex = state.order[state.cursor];
-        state.cursor += 1;
+        const itemIndex = stateBucket.order[stateBucket.cursor];
+        stateBucket.cursor += 1;
         return bucket[itemIndex];
       }
 
+      function resetRandomState() {
+        for (const column of Object.keys(randomState)) {
+          randomState[column].order = [];
+          randomState[column].cursor = 0;
+        }
+      }
+
+      function renderChipRow(target, items) {
+        target.innerHTML = items.map((item) => `<span>${escapeHtml(item)}</span>`).join("");
+      }
+
       function renderRows() {
-        rows.innerHTML = entries
+        rows.innerHTML = getEntries()
           .map(
             (entry) => `
-            <td>
-              <code>${escapeHtml(entry.plain)}</code>
-              <div class="cell-actions">
-                <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.plain)}" data-label="纯文本源码">复制本条</button>
-              </div>
-            </td>
-            <td>
-              <code>${escapeHtml(entry.anchor)}</code>
-              <div class="cell-actions">
-                <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.anchor)}" data-label="锚文本文案源码">复制本条</button>
-              </div>
-            </td>
-            <td>
-              <div>${entry.anchor}</div>
-              <div class="cell-actions">
-                <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.rendered)}" data-label="渲染后文案">复制本条</button>
-              </div>
-            </td>
-            <td>
-              <div>${entry.anchor}</div>
-              <div class="cell-actions">
-                <button
-                  class="copy-btn"
-                  type="button"
-                  data-copy-rich-html="${escapeHtml(entry.richHtml)}"
-                  data-copy-rich-text="${escapeHtml(entry.richText)}"
-                  data-label="富文本评论器文案"
-                >复制本条</button>
-              </div>
-            </td>
-          `
+              <tr>
+                <td>
+                  <code>${escapeHtml(entry.plain)}</code>
+                  <div class="cell-actions">
+                    <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.plain)}" data-label-key="plain">${t().copyRow}</button>
+                  </div>
+                </td>
+                <td>
+                  <code>${escapeHtml(entry.anchor)}</code>
+                  <div class="cell-actions">
+                    <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.anchor)}" data-label-key="anchor">${t().copyRow}</button>
+                  </div>
+                </td>
+                <td>
+                  <div>${entry.anchor}</div>
+                  <div class="cell-actions">
+                    <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.rendered)}" data-label-key="rendered">${t().copyRow}</button>
+                  </div>
+                </td>
+                <td>
+                  <div>${entry.anchor}</div>
+                  <div class="cell-actions">
+                    <button
+                      class="copy-btn"
+                      type="button"
+                      data-copy-rich-html="${escapeHtml(entry.richHtml)}"
+                      data-copy-rich-text="${escapeHtml(entry.richText)}"
+                      data-label-key="rich"
+                    >${t().copyRow}</button>
+                  </div>
+                </td>
+              </tr>
+            `
           )
-          .map((cells) => `<tr>${cells}</tr>`)
           .join("");
+      }
+
+      function applyLanguage() {
+        document.documentElement.lang = state.language === "en" ? "en" : "zh-CN";
+        document.title = t().title;
+        document.getElementById("breadcrumbs-home").textContent = t().breadcrumbsHome;
+        document.getElementById("site-name-inline").textContent = t().siteName;
+        document.getElementById("page-title").textContent = t().title;
+        document.getElementById("target-label").textContent = t().targetLabel;
+        document.getElementById("page-summary").textContent = t().summary;
+        document.getElementById("meta-description").innerHTML = t().metaDescription;
+        document.getElementById("keyword-label").textContent = t().keywordLabel;
+        document.getElementById("intent-label").textContent = t().intentLabel;
+        document.getElementById("th-plain").textContent = t().tableHeaders.plain;
+        document.getElementById("th-anchor").textContent = t().tableHeaders.anchor;
+        document.getElementById("th-rendered").textContent = t().tableHeaders.rendered;
+        document.getElementById("th-rich").textContent = t().tableHeaders.rich;
+        document.getElementById("random-plain").textContent = t().randomButton;
+        document.getElementById("random-anchor").textContent = t().randomButton;
+        document.getElementById("random-rendered").textContent = t().randomButton;
+        document.getElementById("random-rich").textContent = t().randomButton;
+        renderChipRow(keywordChips, t().keywords);
+        renderChipRow(intentChips, t().intents);
+        document.querySelectorAll("[data-lang]").forEach((button) => {
+          button.classList.toggle("is-active", button.getAttribute("data-lang") === state.language);
+        });
+        renderRows();
+      }
+
+      function setActiveLanguage(lang) {
+        state.language = lang;
+        localStorage.setItem(STORAGE_KEY, lang);
+        resetRandomState();
+        applyLanguage();
+        setStatus(t().initialStatus);
       }
 
       rows.addEventListener("click", async (event) => {
         const richButton = event.target.closest("[data-copy-rich-html]");
         if (richButton) {
+          const entries = getEntries();
+          const label = t().copyLabels[richButton.getAttribute("data-label-key")];
           await copyRichText(
             richButton.getAttribute("data-copy-rich-html"),
             richButton.getAttribute("data-copy-rich-text"),
-            `已复制: ${richButton.getAttribute("data-label")}（リヨン首页，${entries.length} 条）`
+            t().copySuccess(label, entries.length)
           );
           return;
         }
@@ -426,10 +627,9 @@
           return;
         }
 
-        await copyText(
-          button.getAttribute("data-copy"),
-          `已复制: ${button.getAttribute("data-label")}（リヨン首页，${entries.length} 条）`
-        );
+        const entries = getEntries();
+        const label = t().copyLabels[button.getAttribute("data-label-key")];
+        await copyText(button.getAttribute("data-copy"), t().copySuccess(label, entries.length));
       });
 
       document.addEventListener("click", async (event) => {
@@ -440,31 +640,28 @@
 
         const column = button.getAttribute("data-random-column");
         const randomEntry = getNextRandomEntry(column);
-        const labels = {
-          plain: "随机纯文本源码",
-          anchor: "随机锚文本文案源码",
-          rendered: "随机渲染后文案",
-          rich: "随机富文本评论器文案"
-        };
-
         if (!randomEntry) {
           return;
         }
 
+        const entries = getEntries();
+        const label = t().randomLabels[column];
+
         if (column === "rich") {
-          await copyRichText(
-            randomEntry.richHtml,
-            randomEntry.richText,
-            `已复制: ${labels[column]}（リヨン首页，${entries.length} 条）`
-          );
+          await copyRichText(randomEntry.richHtml, randomEntry.richText, t().copySuccess(label, entries.length));
           return;
         }
 
-        await copyText(randomEntry[column], `已复制: ${labels[column]}（リヨン首页，${entries.length} 条）`);
+        await copyText(randomEntry[column], t().copySuccess(label, entries.length));
       });
 
-      renderRows();
-      setStatus(initialStatus);
+      document.querySelectorAll("[data-lang]").forEach((button) => {
+        button.addEventListener("click", () => setActiveLanguage(button.getAttribute("data-lang")));
+      });
+
+      state.language = getSavedLanguage();
+      applyLanguage();
+      setStatus(t().initialStatus);
     </script>
   </body>
 </html>

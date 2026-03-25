@@ -30,9 +30,40 @@
       }
 
       main {
-        max-width: 1600px;
+        max-width: 1680px;
         margin: 0 auto;
         padding: 32px 20px 48px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 14px;
+      }
+
+      .lang-switch {
+        display: inline-flex;
+        gap: 8px;
+        padding: 6px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 251, 244, 0.88);
+      }
+
+      .lang-btn {
+        appearance: none;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        background: transparent;
+        color: #5d493b;
+        padding: 8px 12px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .lang-btn.is-active {
+        background: linear-gradient(180deg, #a53a34 0%, #7e1f1b 100%);
+        color: #fff7ef;
       }
 
       h1 {
@@ -224,15 +255,22 @@
   </head>
   <body>
     <main>
+      <div class="topbar">
+        <div class="lang-switch" aria-label="Language switcher">
+          <button class="lang-btn" type="button" data-lang="zh">中文</button>
+          <button class="lang-btn" type="button" data-lang="en">English</button>
+        </div>
+      </div>
+
       <section class="panel">
-        <p class="breadcrumbs"><a href="../../">返回项目首页</a> / GetCursiveText</p>
-        <h1>GetCursiveText 外链建设文案 100 条</h1>
-        <p>主域名：<a href="https://getcursivetext.com/">https://getcursivetext.com/</a></p>
-        <p>表格共 4 列：纯文本文案源码、带锚文本的 HTML 文案源码、锚文本渲染后的文案，以及面向富文本评论器的粘贴版文案。</p>
+        <p class="breadcrumbs"><a href="../../" id="breadcrumbs-home"></a> / GetCursiveText</p>
+        <h1 id="page-title"></h1>
+        <p><span id="domain-label"></span><a href="https://getcursivetext.com/">https://getcursivetext.com/</a></p>
+        <p id="page-summary"></p>
         <div class="meta">
-          <p><strong>生成逻辑：</strong>基于项目现有页面标题与 SEO 关键词簇，覆盖工具页、教程页、社媒场景、签名场景、婚礼场景和品牌场景。</p>
+          <p id="meta-description"></p>
           <div>
-            <strong>已覆盖关键词：</strong>
+            <strong id="keywords-title"></strong>
             <div class="keywords">
               <span>cursive text generator</span>
               <span>letters in cursive</span>
@@ -248,36 +286,36 @@
           </div>
         </div>
         <div class="filter-panel">
-          <div class="filter-label">关键词过滤</div>
+          <div class="filter-label" id="filter-label"></div>
           <div class="filter-controls" id="filter-controls"></div>
         </div>
-        <p class="status" id="status">点击任意复制按钮即可复制对应文案。</p>
+        <p class="status" id="status"></p>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
                 <th>
                   <div class="th-head">
-                    <span class="th-label">纯文本文案源码</span>
-                    <button class="copy-btn" type="button" data-random-column="plain">随机复制本列</button>
+                    <span class="th-label" id="th-plain"></span>
+                    <button class="copy-btn" type="button" data-random-column="plain" id="random-plain"></button>
                   </div>
                 </th>
                 <th>
                   <div class="th-head">
-                    <span class="th-label">带有锚文本文案源码</span>
-                    <button class="copy-btn" type="button" data-random-column="anchor">随机复制本列</button>
+                    <span class="th-label" id="th-anchor"></span>
+                    <button class="copy-btn" type="button" data-random-column="anchor" id="random-anchor"></button>
                   </div>
                 </th>
                 <th>
                   <div class="th-head">
-                    <span class="th-label">锚文本渲染后文案</span>
-                    <button class="copy-btn" type="button" data-random-column="rendered">随机复制本列</button>
+                    <span class="th-label" id="th-rendered"></span>
+                    <button class="copy-btn" type="button" data-random-column="rendered" id="random-rendered"></button>
                   </div>
                 </th>
                 <th>
                   <div class="th-head">
-                    <span class="th-label">富文本评论器文案</span>
-                    <button class="copy-btn" type="button" data-random-column="rich">随机复制本列</button>
+                    <span class="th-label" id="th-rich"></span>
+                    <button class="copy-btn" type="button" data-random-column="rich" id="random-rich"></button>
                   </div>
                 </th>
               </tr>
@@ -289,6 +327,84 @@
     </main>
 
     <script>
+      const STORAGE_KEY = "outreach-copy-hub-language";
+      const translations = {
+        zh: {
+          title: "GetCursiveText 外链建设文案 100 条",
+          breadcrumbsHome: "返回项目首页",
+          domainLabel: "主域名：",
+          summary:
+            "表格共 4 列：纯文本文案源码、带锚文本的 HTML 文案源码、锚文本渲染后的文案，以及面向富文本评论器的粘贴版文案。",
+          metaDescription:
+            "<strong>生成逻辑：</strong>基于项目现有页面标题与 SEO 关键词簇，覆盖工具页、教程页、社媒场景、签名场景、婚礼场景和品牌场景。",
+          keywordsTitle: "已覆盖关键词：",
+          filterLabel: "关键词过滤",
+          initialStatus: "点击任意复制按钮即可复制对应文案。",
+          filterAll: "全部",
+          tableHeaders: {
+            plain: "纯文本文案源码",
+            anchor: "带有锚文本文案源码",
+            rendered: "锚文本渲染后文案",
+            rich: "富文本评论器文案",
+          },
+          randomButton: "随机复制本列",
+          copyRow: "复制本条",
+          copyLabels: {
+            plain: "纯文本源码",
+            anchor: "锚文本文案源码",
+            rendered: "渲染后文案",
+            rich: "富文本评论器文案",
+          },
+          randomLabels: {
+            plain: "随机纯文本源码",
+            anchor: "随机锚文本文案源码",
+            rendered: "随机渲染后文案",
+            rich: "随机富文本评论器文案",
+          },
+          filterSummary: (label, count) => `当前筛选：${label}（${count} 条）`,
+          copySuccess: (label, activeLabel, count) => `已复制: ${label}（当前筛选：${activeLabel}，${count} 条）`,
+          copyFallback: (message) => `${message}（已回退为纯文本复制）`,
+          copyFailure: (message) => `复制失败，请手动复制。${message}`,
+        },
+        en: {
+          title: "GetCursiveText Outreach Copy (100)",
+          breadcrumbsHome: "Back to Hub",
+          domainLabel: "Primary domain: ",
+          summary:
+            "This table has 4 columns: plain-text source copy, HTML anchor-source copy, rendered anchor copy, and a rich-text-editor paste variant.",
+          metaDescription:
+            "<strong>Generation logic:</strong> Built from the live page titles and SEO keyword clusters in the project, covering tool pages, tutorials, social use cases, signatures, weddings, and branding use cases.",
+          keywordsTitle: "Covered keywords:",
+          filterLabel: "Keyword Filter",
+          initialStatus: "Click any copy button to copy the corresponding entry.",
+          filterAll: "All",
+          tableHeaders: {
+            plain: "Plain-Text Source",
+            anchor: "HTML Anchor Source",
+            rendered: "Rendered Anchor Copy",
+            rich: "Rich Text Editor Copy",
+          },
+          randomButton: "Copy Random Entry",
+          copyRow: "Copy This Entry",
+          copyLabels: {
+            plain: "plain-text source",
+            anchor: "HTML anchor source",
+            rendered: "rendered anchor copy",
+            rich: "rich text editor copy",
+          },
+          randomLabels: {
+            plain: "random plain-text source",
+            anchor: "random HTML anchor source",
+            rendered: "random rendered anchor copy",
+            rich: "random rich text editor copy",
+          },
+          filterSummary: (label, count) => `Active filter: ${label} (${count} entries)`,
+          copySuccess: (label, activeLabel, count) => `Copied: ${label} (filter: ${activeLabel}, ${count} entries)`,
+          copyFallback: (message) => `${message} (fell back to plain-text copy)`,
+          copyFailure: (message) => `Copy failed. Please copy it manually. ${message}`,
+        },
+      };
+
       const leads = [
         "If readers want a faster way to test script styling, try",
         "For anyone comparing handwriting tools, I would add",
@@ -370,8 +486,10 @@
       const rows = document.getElementById("rows");
       const filterControls = document.getElementById("filter-controls");
       const status = document.getElementById("status");
-      const initialStatus = "点击任意复制按钮即可复制对应文案。";
-      let activeKeyword = "all";
+      const state = {
+        language: "zh",
+        activeKeyword: "all"
+      };
       const randomState = {
         plain: { order: [], cursor: 0 },
         anchor: { order: [], cursor: 0 },
@@ -387,24 +505,33 @@
           .replaceAll('"', "&quot;");
       }
 
-      function setStatus(message = initialStatus) {
+      function getSavedLanguage() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved === "en" ? "en" : "zh";
+      }
+
+      function t() {
+        return translations[state.language];
+      }
+
+      function setStatus(message = t().initialStatus) {
         status.textContent = message;
       }
 
       function getFilteredEntries() {
-        if (activeKeyword === "all") {
+        if (state.activeKeyword === "all") {
           return entries;
         }
 
-        return entries.filter((entry) => entry.keyword === activeKeyword);
+        return entries.filter((entry) => entry.keyword === state.activeKeyword);
       }
 
       function getActiveFilterLabel() {
-        return activeKeyword === "all" ? "全部" : activeKeyword;
+        return state.activeKeyword === "all" ? t().filterAll : state.activeKeyword;
       }
 
       function getFilterSummary() {
-        return `当前筛选：${getActiveFilterLabel()}（${getFilteredEntries().length} 条）`;
+        return t().filterSummary(getActiveFilterLabel(), getFilteredEntries().length);
       }
 
       function resetRandomState() {
@@ -419,7 +546,7 @@
           await navigator.clipboard.writeText(text);
           setStatus(message);
         } catch (error) {
-          setStatus(`复制失败，请手动复制。${message}`);
+          setStatus(t().copyFailure(message));
         }
       }
 
@@ -438,9 +565,9 @@
         } catch (error) {
           try {
             await navigator.clipboard.writeText(plainText);
-            setStatus(`${message}（已回退为纯文本复制）`);
+            setStatus(t().copyFallback(message));
           } catch (fallbackError) {
-            setStatus(`复制失败，请手动复制。${message}`);
+            setStatus(t().copyFailure(message));
           }
         }
       }
@@ -458,37 +585,39 @@
 
       function getNextRandomEntry(column) {
         const bucket = getFilteredEntries();
-        const state = randomState[column];
+        const stateBucket = randomState[column];
 
         if (!bucket.length) {
           return null;
         }
 
-        if (state.order.length !== bucket.length || state.cursor >= state.order.length) {
+        if (stateBucket.order.length !== bucket.length || stateBucket.cursor >= stateBucket.order.length) {
           const previousIndex =
-            state.order.length && state.cursor > 0 ? state.order[state.cursor - 1] : null;
+            stateBucket.order.length && stateBucket.cursor > 0
+              ? stateBucket.order[stateBucket.cursor - 1]
+              : null;
 
-          state.order = createShuffledIndexes(bucket.length);
-          state.cursor = 0;
+          stateBucket.order = createShuffledIndexes(bucket.length);
+          stateBucket.cursor = 0;
 
-          if (bucket.length > 1 && previousIndex !== null && state.order[0] === previousIndex) {
-            [state.order[0], state.order[1]] = [state.order[1], state.order[0]];
+          if (bucket.length > 1 && previousIndex !== null && stateBucket.order[0] === previousIndex) {
+            [stateBucket.order[0], stateBucket.order[1]] = [stateBucket.order[1], stateBucket.order[0]];
           }
         }
 
-        const itemIndex = state.order[state.cursor];
-        state.cursor += 1;
+        const itemIndex = stateBucket.order[stateBucket.cursor];
+        stateBucket.cursor += 1;
         return bucket[itemIndex];
       }
 
       function renderFilterControls() {
         filterControls.innerHTML = `
-          <button class="filter-btn ${activeKeyword === "all" ? "is-active" : ""}" type="button" data-filter-keyword="all">全部</button>
+          <button class="filter-btn ${state.activeKeyword === "all" ? "is-active" : ""}" type="button" data-filter-keyword="all">${t().filterAll}</button>
           ${keywords
             .map(
               (item) => `
                 <button
-                  class="filter-btn ${activeKeyword === item.anchor ? "is-active" : ""}"
+                  class="filter-btn ${state.activeKeyword === item.anchor ? "is-active" : ""}"
                   type="button"
                   data-filter-keyword="${escapeHtml(item.anchor)}"
                 >${escapeHtml(item.anchor)}</button>
@@ -502,44 +631,77 @@
         rows.innerHTML = getFilteredEntries()
           .map(
             (entry) => `
-            <td>
-              <code>${escapeHtml(entry.plain)}</code>
-              <div class="cell-actions">
-                <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.plain)}" data-label="纯文本源码">复制本条</button>
-              </div>
-            </td>
-            <td>
-              <code>${escapeHtml(entry.anchor)}</code>
-              <div class="cell-actions">
-                <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.anchor)}" data-label="锚文本文案源码">复制本条</button>
-              </div>
-            </td>
-            <td>
-              <div>${entry.anchor}</div>
-              <div class="cell-actions">
-                <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.rendered)}" data-label="渲染后文案">复制本条</button>
-              </div>
-            </td>
-            <td>
-              <div>${entry.anchor}</div>
-              <div class="cell-actions">
-                <button
-                  class="copy-btn"
-                  type="button"
-                  data-copy-rich-html="${escapeHtml(entry.richHtml)}"
-                  data-copy-rich-text="${escapeHtml(entry.richText)}"
-                  data-label="富文本评论器文案"
-                >复制本条</button>
-              </div>
-            </td>
-          `
+              <tr>
+                <td>
+                  <code>${escapeHtml(entry.plain)}</code>
+                  <div class="cell-actions">
+                    <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.plain)}" data-label-key="plain">${t().copyRow}</button>
+                  </div>
+                </td>
+                <td>
+                  <code>${escapeHtml(entry.anchor)}</code>
+                  <div class="cell-actions">
+                    <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.anchor)}" data-label-key="anchor">${t().copyRow}</button>
+                  </div>
+                </td>
+                <td>
+                  <div>${entry.anchor}</div>
+                  <div class="cell-actions">
+                    <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.rendered)}" data-label-key="rendered">${t().copyRow}</button>
+                  </div>
+                </td>
+                <td>
+                  <div>${entry.anchor}</div>
+                  <div class="cell-actions">
+                    <button
+                      class="copy-btn"
+                      type="button"
+                      data-copy-rich-html="${escapeHtml(entry.richHtml)}"
+                      data-copy-rich-text="${escapeHtml(entry.richText)}"
+                      data-label-key="rich"
+                    >${t().copyRow}</button>
+                  </div>
+                </td>
+              </tr>
+            `
           )
-          .map((cells) => `<tr>${cells}</tr>`)
           .join("");
       }
 
+      function applyLanguage() {
+        document.documentElement.lang = state.language === "en" ? "en" : "zh-CN";
+        document.title = t().title;
+        document.getElementById("breadcrumbs-home").textContent = t().breadcrumbsHome;
+        document.getElementById("page-title").textContent = t().title;
+        document.getElementById("domain-label").textContent = t().domainLabel;
+        document.getElementById("page-summary").textContent = t().summary;
+        document.getElementById("meta-description").innerHTML = t().metaDescription;
+        document.getElementById("keywords-title").textContent = t().keywordsTitle;
+        document.getElementById("filter-label").textContent = t().filterLabel;
+        document.getElementById("th-plain").textContent = t().tableHeaders.plain;
+        document.getElementById("th-anchor").textContent = t().tableHeaders.anchor;
+        document.getElementById("th-rendered").textContent = t().tableHeaders.rendered;
+        document.getElementById("th-rich").textContent = t().tableHeaders.rich;
+        document.getElementById("random-plain").textContent = t().randomButton;
+        document.getElementById("random-anchor").textContent = t().randomButton;
+        document.getElementById("random-rendered").textContent = t().randomButton;
+        document.getElementById("random-rich").textContent = t().randomButton;
+        document.querySelectorAll("[data-lang]").forEach((button) => {
+          button.classList.toggle("is-active", button.getAttribute("data-lang") === state.language);
+        });
+        renderFilterControls();
+        renderRows();
+      }
+
+      function setActiveLanguage(lang) {
+        state.language = lang;
+        localStorage.setItem(STORAGE_KEY, lang);
+        applyLanguage();
+        setStatus(getFilteredEntries().length === entries.length ? t().initialStatus : getFilterSummary());
+      }
+
       function setActiveKeyword(keyword, { announce = true } = {}) {
-        activeKeyword = keyword;
+        state.activeKeyword = keyword;
         resetRandomState();
         renderFilterControls();
         renderRows();
@@ -553,10 +715,11 @@
         const richButton = event.target.closest("[data-copy-rich-html]");
         if (richButton) {
           const count = getFilteredEntries().length;
+          const label = t().copyLabels[richButton.getAttribute("data-label-key")];
           await copyRichText(
             richButton.getAttribute("data-copy-rich-html"),
             richButton.getAttribute("data-copy-rich-text"),
-            `已复制: ${richButton.getAttribute("data-label")}（当前筛选：${getActiveFilterLabel()}，${count} 条）`
+            t().copySuccess(label, getActiveFilterLabel(), count)
           );
           return;
         }
@@ -567,10 +730,8 @@
         }
 
         const count = getFilteredEntries().length;
-        await copyText(
-          button.getAttribute("data-copy"),
-          `已复制: ${button.getAttribute("data-label")}（当前筛选：${getActiveFilterLabel()}，${count} 条）`
-        );
+        const label = t().copyLabels[button.getAttribute("data-label-key")];
+        await copyText(button.getAttribute("data-copy"), t().copySuccess(label, getActiveFilterLabel(), count));
       });
 
       filterControls.addEventListener("click", (event) => {
@@ -580,7 +741,7 @@
         }
 
         const keyword = button.getAttribute("data-filter-keyword");
-        if (keyword === activeKeyword) {
+        if (keyword === state.activeKeyword) {
           return;
         }
 
@@ -595,36 +756,28 @@
 
         const column = button.getAttribute("data-random-column");
         const randomEntry = getNextRandomEntry(column);
-        const count = getFilteredEntries().length;
-        const labels = {
-          plain: "随机纯文本源码",
-          anchor: "随机锚文本文案源码",
-          rendered: "随机渲染后文案",
-          rich: "随机富文本评论器文案"
-        };
-
         if (!randomEntry) {
           return;
         }
 
+        const count = getFilteredEntries().length;
+        const label = t().randomLabels[column];
+
         if (column === "rich") {
-          await copyRichText(
-            randomEntry.richHtml,
-            randomEntry.richText,
-            `已复制: ${labels[column]}（当前筛选：${getActiveFilterLabel()}，${count} 条）`
-          );
+          await copyRichText(randomEntry.richHtml, randomEntry.richText, t().copySuccess(label, getActiveFilterLabel(), count));
           return;
         }
 
-        await copyText(
-          randomEntry[column],
-          `已复制: ${labels[column]}（当前筛选：${getActiveFilterLabel()}，${count} 条）`
-        );
+        await copyText(randomEntry[column], t().copySuccess(label, getActiveFilterLabel(), count));
       });
 
-      renderFilterControls();
-      renderRows();
-      setStatus(initialStatus);
+      document.querySelectorAll("[data-lang]").forEach((button) => {
+        button.addEventListener("click", () => setActiveLanguage(button.getAttribute("data-lang")));
+      });
+
+      state.language = getSavedLanguage();
+      applyLanguage();
+      setStatus(t().initialStatus);
     </script>
   </body>
 </html>
