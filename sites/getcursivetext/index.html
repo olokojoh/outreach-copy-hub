@@ -3,255 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GetCursiveText Backlink Copy 100</title>
-    <style>
-      :root {
-        color-scheme: light;
-        --bg: #f5f1e8;
-        --panel: #fffdf8;
-        --line: #d8cfbf;
-        --text: #2a2118;
-        --muted: #726252;
-        --link: #8e2c27;
-        --code-bg: #f3ede2;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        font-family: "Georgia", "Times New Roman", serif;
-        background:
-          radial-gradient(circle at top left, #fff7ea 0, transparent 28%),
-          linear-gradient(180deg, #f7f1e6 0%, #efe7da 100%);
-        color: var(--text);
-      }
-
-      main {
-        max-width: 1680px;
-        margin: 0 auto;
-        padding: 32px 20px 48px;
-      }
-
-      .topbar {
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 14px;
-      }
-
-      .lang-switch {
-        display: inline-flex;
-        gap: 8px;
-        padding: 6px;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        background: rgba(255, 251, 244, 0.88);
-      }
-
-      .lang-btn {
-        appearance: none;
-        border: 1px solid transparent;
-        border-radius: 999px;
-        background: transparent;
-        color: #5d493b;
-        padding: 8px 12px;
-        font-size: 12px;
-        cursor: pointer;
-      }
-
-      .lang-btn.is-active {
-        background: linear-gradient(180deg, #a53a34 0%, #7e1f1b 100%);
-        color: #fff7ef;
-      }
-
-      h1 {
-        margin: 0 0 12px;
-        font-size: 34px;
-        line-height: 1.1;
-      }
-
-      .breadcrumbs {
-        margin: 0 0 16px;
-        font-size: 13px;
-        color: var(--muted);
-      }
-
-      .breadcrumbs a {
-        color: var(--link);
-      }
-
-      p {
-        margin: 0 0 10px;
-        color: var(--muted);
-        line-height: 1.6;
-      }
-
-      .panel {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        padding: 20px;
-        box-shadow: 0 10px 30px rgba(73, 53, 31, 0.08);
-      }
-
-      .meta {
-        margin: 18px 0 24px;
-        display: grid;
-        gap: 12px;
-      }
-
-      .meta strong {
-        color: var(--text);
-      }
-
-      .table-wrap {
-        overflow: auto;
-      }
-
-      .filter-panel {
-        display: grid;
-        gap: 12px;
-        margin: 0 0 18px;
-      }
-
-      .filter-label {
-        font-size: 14px;
-        font-weight: 700;
-        color: var(--text);
-      }
-
-      .filter-controls {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-      }
-
-      th,
-      td {
-        vertical-align: top;
-        border: 1px solid var(--line);
-        padding: 14px;
-      }
-
-      th {
-        position: sticky;
-        top: 0;
-        background: #f1e8da;
-        text-align: left;
-        font-size: 14px;
-        letter-spacing: 0.03em;
-      }
-
-      td {
-        background: rgba(255, 253, 248, 0.96);
-        font-size: 14px;
-        line-height: 1.6;
-      }
-
-      code {
-        display: block;
-        white-space: pre-wrap;
-        word-break: break-word;
-        font-family: "SFMono-Regular", "Consolas", monospace;
-        background: var(--code-bg);
-        padding: 10px;
-        border-radius: 10px;
-        color: #3d3026;
-      }
-
-      a {
-        color: var(--link);
-      }
-
-      .keywords {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 8px;
-      }
-
-      .keywords span {
-        display: inline-block;
-        padding: 6px 10px;
-        border-radius: 999px;
-        border: 1px solid var(--line);
-        background: #fbf6ee;
-        color: #4a3a2e;
-        font-size: 13px;
-      }
-
-      .copy-btn {
-        appearance: none;
-        border: 1px solid #b89f86;
-        background: linear-gradient(180deg, #fff9ef 0%, #efe2cf 100%);
-        color: #463226;
-        border-radius: 999px;
-        padding: 8px 12px;
-        font-size: 12px;
-        line-height: 1;
-        cursor: pointer;
-      }
-
-      .copy-btn:hover {
-        border-color: #8e2c27;
-        color: #8e2c27;
-      }
-
-      .filter-btn {
-        appearance: none;
-        border: 1px solid #c7b39e;
-        background: rgba(255, 249, 239, 0.72);
-        color: #5d493b;
-        border-radius: 999px;
-        padding: 9px 14px;
-        font-size: 13px;
-        line-height: 1.2;
-        cursor: pointer;
-        transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
-      }
-
-      .filter-btn:hover {
-        border-color: #8e2c27;
-        color: #8e2c27;
-      }
-
-      .filter-btn.is-active {
-        border-color: #8e2c27;
-        background: linear-gradient(180deg, #a53a34 0%, #7e1f1b 100%);
-        color: #fff7ef;
-        box-shadow: 0 8px 18px rgba(126, 31, 27, 0.18);
-      }
-
-      .th-head {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-
-      .th-label {
-        font-weight: 700;
-      }
-
-      .cell-actions {
-        margin-top: 10px;
-      }
-
-      .status {
-        margin: 0 0 14px;
-        min-height: 20px;
-        color: #6b4330;
-        font-size: 13px;
-      }
-    </style>
+    <title>GetCursiveText Page Index</title>
+    <link rel="stylesheet" href="../../assets/hub.css" />
   </head>
   <body>
     <main>
@@ -262,66 +15,39 @@
         </div>
       </div>
 
+      <section class="hero">
+        <p class="breadcrumbs"><a href="../../" id="breadcrumbs-home"></a> / <span>GetCursiveText</span></p>
+        <div class="summary">
+          <h1 id="hero-title"></h1>
+          <p id="hero-body-1"></p>
+          <p id="hero-body-2"></p>
+        </div>
+      </section>
+
       <section class="panel">
-        <p class="breadcrumbs"><a href="../../" id="breadcrumbs-home"></a> / GetCursiveText</p>
-        <h1 id="page-title"></h1>
-        <p><span id="domain-label"></span><a href="https://getcursivetext.com/">https://getcursivetext.com/</a></p>
-        <p id="page-summary"></p>
-        <div class="meta">
-          <p id="meta-description"></p>
-          <div>
-            <strong id="keywords-title"></strong>
-            <div class="keywords">
-              <span>cursive text generator</span>
-              <span>letters in cursive</span>
-              <span>cursive practice sheets</span>
-              <span>signature font generator</span>
-              <span>calligraphy font generator</span>
-              <span>wedding cursive font generator</span>
-              <span>tattoo cursive font generator</span>
-              <span>instagram cursive font generator</span>
-              <span>logo cursive font generator</span>
-              <span>name cursive font generator</span>
+        <div class="section-head">
+          <h2 id="section-title"></h2>
+          <p class="section-note" id="section-note"></p>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <h3>Homepage</h3>
+            <p id="card-desc"></p>
+            <div class="meta">
+              <div><span id="route-label"></span><a href="./home/">/</a></div>
+              <div><span id="target-label"></span><a href="https://getcursivetext.com/">https://getcursivetext.com/</a></div>
+              <div><span id="count-label"></span>100</div>
             </div>
-          </div>
-        </div>
-        <div class="filter-panel">
-          <div class="filter-label" id="filter-label"></div>
-          <div class="filter-controls" id="filter-controls"></div>
-        </div>
-        <p class="status" id="status"></p>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>
-                  <div class="th-head">
-                    <span class="th-label" id="th-plain"></span>
-                    <button class="copy-btn" type="button" data-random-column="plain" id="random-plain"></button>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-head">
-                    <span class="th-label" id="th-anchor"></span>
-                    <button class="copy-btn" type="button" data-random-column="anchor" id="random-anchor"></button>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-head">
-                    <span class="th-label" id="th-rendered"></span>
-                    <button class="copy-btn" type="button" data-random-column="rendered" id="random-rendered"></button>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-head">
-                    <span class="th-label" id="th-rich"></span>
-                    <button class="copy-btn" type="button" data-random-column="rich" id="random-rich"></button>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody id="rows"></tbody>
-          </table>
+            <div class="badge-row">
+              <span class="badge">cursive text generator</span>
+              <span class="badge">letters in cursive</span>
+              <span class="badge">cursive practice sheets</span>
+              <span class="badge">signature font generator</span>
+            </div>
+            <div style="margin-top: 18px">
+              <a class="primary-link" href="./home/" id="cta"></a>
+            </div>
+          </article>
         </div>
       </section>
     </main>
@@ -330,454 +56,67 @@
       const STORAGE_KEY = "outreach-copy-hub-language";
       const translations = {
         zh: {
-          title: "GetCursiveText 外链建设文案 100 条",
           breadcrumbsHome: "返回项目首页",
-          domainLabel: "主域名：",
-          summary:
-            "表格共 4 列：纯文本文案源码、带锚文本的 HTML 文案源码、锚文本渲染后的文案，以及面向富文本评论器的粘贴版文案。",
-          metaDescription:
-            "<strong>生成逻辑：</strong>基于项目现有页面标题与 SEO 关键词簇，覆盖工具页、教程页、社媒场景、签名场景、婚礼场景和品牌场景。",
-          keywordsTitle: "已覆盖关键词：",
-          filterLabel: "关键词过滤",
-          initialStatus: "点击任意复制按钮即可复制对应文案。",
-          filterAll: "全部",
-          tableHeaders: {
-            plain: "纯文本文案源码",
-            anchor: "带有锚文本文案源码",
-            rendered: "锚文本渲染后文案",
-            rich: "富文本评论器文案",
-          },
-          randomButton: "随机复制本列",
-          copyRow: "复制本条",
-          copyLabels: {
-            plain: "纯文本源码",
-            anchor: "锚文本文案源码",
-            rendered: "渲染后文案",
-            rich: "富文本评论器文案",
-          },
-          randomLabels: {
-            plain: "随机纯文本源码",
-            anchor: "随机锚文本文案源码",
-            rendered: "随机渲染后文案",
-            rich: "随机富文本评论器文案",
-          },
-          filterSummary: (label, count) => `当前筛选：${label}（${count} 条）`,
-          copySuccess: (label, activeLabel, count) => `已复制: ${label}（当前筛选：${activeLabel}，${count} 条）`,
-          copyFallback: (message) => `${message}（已回退为纯文本复制）`,
-          copyFailure: (message) => `复制失败，请手动复制。${message}`,
+          heroTitle: "GetCursiveText 页面索引",
+          hero1: "这个站点当前只维护首页外链文案库。页面已经从“站点即文案表格”重构成“站点页索引 -> 页面文案库”的结构，方便以后继续补充更多 landing page。",
+          hero2: "目前首页库保留 10 个 SEO 关键词筛选、100 条文案和四列复制能力。点击首页入口即可进入原有文案库。",
+          sectionTitle: "页面入口",
+          sectionNote: "1 个页面库 / 100 条文案",
+          routeLabel: "页面：",
+          targetLabel: "链接：",
+          countLabel: "文案数：",
+          cardDesc: "首页文案库，适合围绕 `cursive text generator` 等核心词做首页外链宣发，并支持关键词过滤。",
+          cta: "进入页面文案库",
         },
         en: {
-          title: "GetCursiveText Outreach Copy (100)",
           breadcrumbsHome: "Back to Hub",
-          domainLabel: "Primary domain: ",
-          summary:
-            "This table has 4 columns: plain-text source copy, HTML anchor-source copy, rendered anchor copy, and a rich-text-editor paste variant.",
-          metaDescription:
-            "<strong>Generation logic:</strong> Built from the live page titles and SEO keyword clusters in the project, covering tool pages, tutorials, social use cases, signatures, weddings, and branding use cases.",
-          keywordsTitle: "Covered keywords:",
-          filterLabel: "Keyword Filter",
-          initialStatus: "Click any copy button to copy the corresponding entry.",
-          filterAll: "All",
-          tableHeaders: {
-            plain: "Plain-Text Source",
-            anchor: "HTML Anchor Source",
-            rendered: "Rendered Anchor Copy",
-            rich: "Rich Text Editor Copy",
-          },
-          randomButton: "Copy Random Entry",
-          copyRow: "Copy This Entry",
-          copyLabels: {
-            plain: "plain-text source",
-            anchor: "HTML anchor source",
-            rendered: "rendered anchor copy",
-            rich: "rich text editor copy",
-          },
-          randomLabels: {
-            plain: "random plain-text source",
-            anchor: "random HTML anchor source",
-            rendered: "random rendered anchor copy",
-            rich: "random rich text editor copy",
-          },
-          filterSummary: (label, count) => `Active filter: ${label} (${count} entries)`,
-          copySuccess: (label, activeLabel, count) => `Copied: ${label} (filter: ${activeLabel}, ${count} entries)`,
-          copyFallback: (message) => `${message} (fell back to plain-text copy)`,
-          copyFailure: (message) => `Copy failed. Please copy it manually. ${message}`,
+          heroTitle: "GetCursiveText Page Index",
+          hero1: "This site currently maintains one homepage outreach library. The layout has been refactored from a single table page into a site index that points to page-level libraries, so it can scale to more landing pages later.",
+          hero2: "The homepage library keeps the existing 10-keyword filter, 100 entries, and four copy formats. Open the homepage card to access the original copy table.",
+          sectionTitle: "Page Entrypoints",
+          sectionNote: "1 page library / 100 entries",
+          routeLabel: "Route: ",
+          targetLabel: "Link: ",
+          countLabel: "Entries: ",
+          cardDesc: "Homepage library for core terms like `cursive text generator`, with keyword filtering and four copy formats.",
+          cta: "Open Page Library",
         },
       };
-
-      const leads = [
-        "If readers want a faster way to test script styling, try",
-        "For anyone comparing handwriting tools, I would add",
-        "If you need a practical option for social graphics, check",
-        "One resource I keep bookmarked for lettering drafts is",
-        "A useful page to add here is",
-        "If the goal is quick copy-ready text, start with",
-        "For worksheets, names, and decorative headers, review",
-        "When I need to check readability before final design, I use",
-        "This is also worth mentioning for people who want editable text and image export:",
-        "For creators testing script styles across use cases, see"
-      ];
-
-      const keywords = [
-        {
-          anchor: "cursive text generator",
-          url: "https://getcursivetext.com/cursive-text-generator",
-          benefit: "It gives instant style previews, copy and paste output, and transparent PNG export."
-        },
-        {
-          anchor: "letters in cursive",
-          url: "https://getcursivetext.com/letters-in-cursive",
-          benefit: "It helps with alphabet forms, initials, numbers, and quick handwriting references on one page."
-        },
-        {
-          anchor: "cursive practice sheets",
-          url: "https://getcursivetext.com/cursive-practice-sheets",
-          benefit: "It makes printable handwriting worksheets for alphabet drills, classroom work, and name tracing."
-        },
-        {
-          anchor: "signature font generator",
-          url: "https://getcursivetext.com/signature-font-generator",
-          benefit: "It is useful for email signatures, watermark drafts, document stamps, and handwritten name marks."
-        },
-        {
-          anchor: "calligraphy font generator",
-          url: "https://getcursivetext.com/calligraphy-font-generator",
-          benefit: "It works well for invitations, labels, logos, and decorative lettering with calligraphy-style controls."
-        },
-        {
-          anchor: "wedding cursive font generator",
-          url: "https://getcursivetext.com/wedding-cursive-font-generator",
-          benefit: "It is tailored for save the dates, couple names, elegant invitation headers, and wedding signage."
-        },
-        {
-          anchor: "tattoo cursive font generator",
-          url: "https://getcursivetext.com/tattoo-cursive-font-generator",
-          benefit: "It is handy for previewing names and short quotes before committing to tattoo lettering."
-        },
-        {
-          anchor: "instagram cursive font generator",
-          url: "https://getcursivetext.com/instagram-cursive-font-generator",
-          benefit: "It creates bio fonts and copy-paste cursive text for captions, stories, and usernames."
-        },
-        {
-          anchor: "logo cursive font generator",
-          url: "https://getcursivetext.com/logo-cursive-font-generator",
-          benefit: "It helps test brand-name scripts, packaging looks, and fast logo mockups."
-        },
-        {
-          anchor: "name cursive font generator",
-          url: "https://getcursivetext.com/name-cursive-font-generator",
-          benefit: "It is a good fit for profile names, creator tags, stickers, and personalized signature ideas."
-        }
-      ];
-
-      const entries = leads.flatMap((lead) =>
-        keywords.map((item) => ({
-          keyword: item.anchor,
-          url: item.url,
-          plain: `${lead} ${item.anchor}: ${item.url} ${item.benefit}`,
-          anchor: `${lead} <a href="${item.url}">${item.anchor}</a>. ${item.benefit}`,
-          rendered: `${lead} ${item.anchor}. ${item.benefit}`,
-          richText: `${lead} ${item.anchor}. ${item.benefit}`,
-          richHtml: `${escapeHtml(lead)} <a href="${item.url}">${escapeHtml(item.anchor)}</a>. ${escapeHtml(item.benefit)}`
-        }))
-      );
-
-      const rows = document.getElementById("rows");
-      const filterControls = document.getElementById("filter-controls");
-      const status = document.getElementById("status");
-      const state = {
-        language: "zh",
-        activeKeyword: "all"
-      };
-      const randomState = {
-        plain: { order: [], cursor: 0 },
-        anchor: { order: [], cursor: 0 },
-        rendered: { order: [], cursor: 0 },
-        rich: { order: [], cursor: 0 }
-      };
-
-      function escapeHtml(value) {
-        return value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;");
-      }
 
       function getSavedLanguage() {
         const saved = localStorage.getItem(STORAGE_KEY);
         return saved === "en" ? "en" : "zh";
       }
 
-      function t() {
-        return translations[state.language];
-      }
-
-      function setStatus(message = t().initialStatus) {
-        status.textContent = message;
-      }
-
-      function getFilteredEntries() {
-        if (state.activeKeyword === "all") {
-          return entries;
-        }
-
-        return entries.filter((entry) => entry.keyword === state.activeKeyword);
-      }
-
-      function getActiveFilterLabel() {
-        return state.activeKeyword === "all" ? t().filterAll : state.activeKeyword;
-      }
-
-      function getFilterSummary() {
-        return t().filterSummary(getActiveFilterLabel(), getFilteredEntries().length);
-      }
-
-      function resetRandomState() {
-        for (const column of Object.keys(randomState)) {
-          randomState[column].order = [];
-          randomState[column].cursor = 0;
-        }
-      }
-
-      async function copyText(text, message) {
-        try {
-          await navigator.clipboard.writeText(text);
-          setStatus(message);
-        } catch (error) {
-          setStatus(t().copyFailure(message));
-        }
-      }
-
-      async function copyRichText(html, plainText, message) {
-        try {
-          if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
-            const item = new ClipboardItem({
-              "text/html": new Blob([html], { type: "text/html" }),
-              "text/plain": new Blob([plainText], { type: "text/plain" })
-            });
-            await navigator.clipboard.write([item]);
-          } else {
-            await navigator.clipboard.writeText(plainText);
-          }
-          setStatus(message);
-        } catch (error) {
-          try {
-            await navigator.clipboard.writeText(plainText);
-            setStatus(t().copyFallback(message));
-          } catch (fallbackError) {
-            setStatus(t().copyFailure(message));
-          }
-        }
-      }
-
-      function createShuffledIndexes(length) {
-        const order = Array.from({ length }, (_, index) => index);
-
-        for (let index = order.length - 1; index > 0; index -= 1) {
-          const swapIndex = Math.floor(Math.random() * (index + 1));
-          [order[index], order[swapIndex]] = [order[swapIndex], order[index]];
-        }
-
-        return order;
-      }
-
-      function getNextRandomEntry(column) {
-        const bucket = getFilteredEntries();
-        const stateBucket = randomState[column];
-
-        if (!bucket.length) {
-          return null;
-        }
-
-        if (stateBucket.order.length !== bucket.length || stateBucket.cursor >= stateBucket.order.length) {
-          const previousIndex =
-            stateBucket.order.length && stateBucket.cursor > 0
-              ? stateBucket.order[stateBucket.cursor - 1]
-              : null;
-
-          stateBucket.order = createShuffledIndexes(bucket.length);
-          stateBucket.cursor = 0;
-
-          if (bucket.length > 1 && previousIndex !== null && stateBucket.order[0] === previousIndex) {
-            [stateBucket.order[0], stateBucket.order[1]] = [stateBucket.order[1], stateBucket.order[0]];
-          }
-        }
-
-        const itemIndex = stateBucket.order[stateBucket.cursor];
-        stateBucket.cursor += 1;
-        return bucket[itemIndex];
-      }
-
-      function renderFilterControls() {
-        filterControls.innerHTML = `
-          <button class="filter-btn ${state.activeKeyword === "all" ? "is-active" : ""}" type="button" data-filter-keyword="all">${t().filterAll}</button>
-          ${keywords
-            .map(
-              (item) => `
-                <button
-                  class="filter-btn ${state.activeKeyword === item.anchor ? "is-active" : ""}"
-                  type="button"
-                  data-filter-keyword="${escapeHtml(item.anchor)}"
-                >${escapeHtml(item.anchor)}</button>
-              `
-            )
-            .join("")}
-        `;
-      }
-
-      function renderRows() {
-        rows.innerHTML = getFilteredEntries()
-          .map(
-            (entry) => `
-              <tr>
-                <td>
-                  <code>${escapeHtml(entry.plain)}</code>
-                  <div class="cell-actions">
-                    <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.plain)}" data-label-key="plain">${t().copyRow}</button>
-                  </div>
-                </td>
-                <td>
-                  <code>${escapeHtml(entry.anchor)}</code>
-                  <div class="cell-actions">
-                    <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.anchor)}" data-label-key="anchor">${t().copyRow}</button>
-                  </div>
-                </td>
-                <td>
-                  <div>${entry.anchor}</div>
-                  <div class="cell-actions">
-                    <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.rendered)}" data-label-key="rendered">${t().copyRow}</button>
-                  </div>
-                </td>
-                <td>
-                  <div>${entry.anchor}</div>
-                  <div class="cell-actions">
-                    <button
-                      class="copy-btn"
-                      type="button"
-                      data-copy-rich-html="${escapeHtml(entry.richHtml)}"
-                      data-copy-rich-text="${escapeHtml(entry.richText)}"
-                      data-label-key="rich"
-                    >${t().copyRow}</button>
-                  </div>
-                </td>
-              </tr>
-            `
-          )
-          .join("");
-      }
-
-      function applyLanguage() {
-        document.documentElement.lang = state.language === "en" ? "en" : "zh-CN";
-        document.title = t().title;
-        document.getElementById("breadcrumbs-home").textContent = t().breadcrumbsHome;
-        document.getElementById("page-title").textContent = t().title;
-        document.getElementById("domain-label").textContent = t().domainLabel;
-        document.getElementById("page-summary").textContent = t().summary;
-        document.getElementById("meta-description").innerHTML = t().metaDescription;
-        document.getElementById("keywords-title").textContent = t().keywordsTitle;
-        document.getElementById("filter-label").textContent = t().filterLabel;
-        document.getElementById("th-plain").textContent = t().tableHeaders.plain;
-        document.getElementById("th-anchor").textContent = t().tableHeaders.anchor;
-        document.getElementById("th-rendered").textContent = t().tableHeaders.rendered;
-        document.getElementById("th-rich").textContent = t().tableHeaders.rich;
-        document.getElementById("random-plain").textContent = t().randomButton;
-        document.getElementById("random-anchor").textContent = t().randomButton;
-        document.getElementById("random-rendered").textContent = t().randomButton;
-        document.getElementById("random-rich").textContent = t().randomButton;
-        document.querySelectorAll("[data-lang]").forEach((button) => {
-          button.classList.toggle("is-active", button.getAttribute("data-lang") === state.language);
+      function render(lang) {
+        const copy = translations[lang];
+        document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
+        document.title = lang === "en" ? "GetCursiveText Page Index" : "GetCursiveText 页面索引";
+        document.getElementById("breadcrumbs-home").textContent = copy.breadcrumbsHome;
+        document.getElementById("hero-title").textContent = copy.heroTitle;
+        document.getElementById("hero-body-1").textContent = copy.hero1;
+        document.getElementById("hero-body-2").textContent = copy.hero2;
+        document.getElementById("section-title").textContent = copy.sectionTitle;
+        document.getElementById("section-note").textContent = copy.sectionNote;
+        document.getElementById("route-label").textContent = copy.routeLabel;
+        document.getElementById("target-label").textContent = copy.targetLabel;
+        document.getElementById("count-label").textContent = copy.countLabel;
+        document.getElementById("card-desc").textContent = copy.cardDesc;
+        document.getElementById("cta").textContent = copy.cta;
+        document.querySelectorAll(".lang-btn").forEach((button) => {
+          button.classList.toggle("is-active", button.dataset.lang === lang);
         });
-        renderFilterControls();
-        renderRows();
       }
 
-      function setActiveLanguage(lang) {
-        state.language = lang;
-        localStorage.setItem(STORAGE_KEY, lang);
-        applyLanguage();
-        setStatus(getFilteredEntries().length === entries.length ? t().initialStatus : getFilterSummary());
-      }
+      render(getSavedLanguage());
 
-      function setActiveKeyword(keyword, { announce = true } = {}) {
-        state.activeKeyword = keyword;
-        resetRandomState();
-        renderFilterControls();
-        renderRows();
-
-        if (announce) {
-          setStatus(getFilterSummary());
-        }
-      }
-
-      rows.addEventListener("click", async (event) => {
-        const richButton = event.target.closest("[data-copy-rich-html]");
-        if (richButton) {
-          const count = getFilteredEntries().length;
-          const label = t().copyLabels[richButton.getAttribute("data-label-key")];
-          await copyRichText(
-            richButton.getAttribute("data-copy-rich-html"),
-            richButton.getAttribute("data-copy-rich-text"),
-            t().copySuccess(label, getActiveFilterLabel(), count)
-          );
-          return;
-        }
-
-        const button = event.target.closest("[data-copy]");
-        if (!button) {
-          return;
-        }
-
-        const count = getFilteredEntries().length;
-        const label = t().copyLabels[button.getAttribute("data-label-key")];
-        await copyText(button.getAttribute("data-copy"), t().copySuccess(label, getActiveFilterLabel(), count));
+      document.querySelectorAll(".lang-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          const lang = button.dataset.lang === "en" ? "en" : "zh";
+          localStorage.setItem(STORAGE_KEY, lang);
+          render(lang);
+        });
       });
-
-      filterControls.addEventListener("click", (event) => {
-        const button = event.target.closest("[data-filter-keyword]");
-        if (!button) {
-          return;
-        }
-
-        const keyword = button.getAttribute("data-filter-keyword");
-        if (keyword === state.activeKeyword) {
-          return;
-        }
-
-        setActiveKeyword(keyword);
-      });
-
-      document.addEventListener("click", async (event) => {
-        const button = event.target.closest("[data-random-column]");
-        if (!button) {
-          return;
-        }
-
-        const column = button.getAttribute("data-random-column");
-        const randomEntry = getNextRandomEntry(column);
-        if (!randomEntry) {
-          return;
-        }
-
-        const count = getFilteredEntries().length;
-        const label = t().randomLabels[column];
-
-        if (column === "rich") {
-          await copyRichText(randomEntry.richHtml, randomEntry.richText, t().copySuccess(label, getActiveFilterLabel(), count));
-          return;
-        }
-
-        await copyText(randomEntry[column], t().copySuccess(label, getActiveFilterLabel(), count));
-      });
-
-      document.querySelectorAll("[data-lang]").forEach((button) => {
-        button.addEventListener("click", () => setActiveLanguage(button.getAttribute("data-lang")));
-      });
-
-      state.language = getSavedLanguage();
-      applyLanguage();
-      setStatus(t().initialStatus);
     </script>
   </body>
 </html>
