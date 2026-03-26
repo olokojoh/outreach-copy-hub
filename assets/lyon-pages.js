@@ -1,453 +1,560 @@
 (function () {
-  const STORAGE_KEY = "outreach-copy-hub-language";
+  const COPY_LOCALE_KEY = "outreach-copy-hub-lyon-copy-locale";
   const pageKey = document.body.dataset.pageKey;
-  const targetSite = "https://xn--cekd2a.net";
-
-  const ui = {
-    zh: {
-      breadcrumbsHome: "返回项目首页",
-      breadcrumbsSite: "返回站点页索引",
-      targetLabel: "目标页面：",
-      keywordLabel: "当前锚词池：",
-      intentLabel: "页面意图标签：",
-      statusInitial: "点击任意复制按钮即可复制对应文案。",
-      copyRow: "复制本条",
-      randomButton: "随机复制本列",
-      tableHeaders: {
-        plain: "纯文本文案源码",
-        anchor: "带有锚文本文案源码",
-        rendered: "锚文本渲染后文案",
-        rich: "富文本评论器文案",
-      },
-      copyLabels: {
-        plain: "纯文本源码",
-        anchor: "锚文本文案源码",
-        rendered: "渲染后文案",
-        rich: "富文本评论器文案",
-      },
-      randomLabels: {
-        plain: "随机纯文本源码",
-        anchor: "随机锚文本文案源码",
-        rendered: "随机渲染后文案",
-        rich: "随机富文本评论器文案",
-      },
-      copySuccess: (label, name, count) => `已复制: ${label}（${name}，${count} 条）`,
-      copyFallback: (message) => `${message}（已回退为纯文本复制）`,
-      copyFailure: (message) => `复制失败，请手动复制。${message}`,
-      metaPrefix: "<strong>页面定位：</strong>",
-      titleSuffix: "外链建设文案",
-    },
-    en: {
-      breadcrumbsHome: "Back to Hub",
-      breadcrumbsSite: "Back to Site Index",
-      targetLabel: "Target page: ",
-      keywordLabel: "Anchor pool:",
-      intentLabel: "Page intent tags:",
-      statusInitial: "Click any copy button to copy the corresponding entry.",
-      copyRow: "Copy This Entry",
-      randomButton: "Copy Random Entry",
-      tableHeaders: {
-        plain: "Plain-Text Source",
-        anchor: "HTML Anchor Source",
-        rendered: "Rendered Anchor Copy",
-        rich: "Rich Text Editor Copy",
-      },
-      copyLabels: {
-        plain: "plain-text source",
-        anchor: "HTML anchor source",
-        rendered: "rendered anchor copy",
-        rich: "rich text editor copy",
-      },
-      randomLabels: {
-        plain: "random plain-text source",
-        anchor: "random HTML anchor source",
-        rendered: "random rendered anchor copy",
-        rich: "random rich text editor copy",
-      },
-      copySuccess: (label, name, count) => `Copied: ${label} (${name}, ${count} entries)`,
-      copyFallback: (message) => `${message} (fell back to plain-text copy)`,
-      copyFailure: (message) => `Copy failed. Please copy it manually. ${message}`,
-      metaPrefix: "<strong>Page scope:</strong> ",
-      titleSuffix: "Outreach Copy",
-    },
-  };
-
-  const pages = {
-    home: {
-      route: "/",
-      targetUrl: `${targetSite}/`,
-      count: 40,
-      name: {
-        zh: "リヨン 首页",
-        en: "Lyon Homepage",
-      },
-      summary: {
-        zh: "本页只服务里昂站首页 `/`，围绕 `リヨン` 及其自然变体做 broad intent 外链，不混入酒店、机场、美食或路线内页链接。",
-        en: "This page only serves the Lyon homepage `/`. It focuses on broad-intent outreach around Lyon and its natural anchor variants, without mixing hotel, airport, food, or itinerary subpages.",
-      },
-      meta: {
-        zh: "首页承担城市入口、世界遗产、治安感知、旅行基础判断与站内分流。文案只把用户送到首页，再由首页分流到酒店、机场、巴黎出发、美食与模型路线。",
-        en: "The homepage handles city-entry intent, UNESCO framing, safety context, travel basics, and internal branching. The copy sends readers to the homepage first, then lets the site branch them into hotels, airport access, Paris-to-Lyon transit, food, or itinerary planning.",
-      },
-      intents: {
-        zh: ["城市入口", "世界遗产", "治安判断", "旅行基础", "站内分流"],
-        en: ["City entry", "UNESCO heritage", "Safety framing", "Travel basics", "Topic branching"],
-      },
-      anchors: {
-        zh: ["リヨン", "リヨン 観光", "リヨン 旅行", "フランス リヨン", "リヨン完全ガイド"],
-        en: ["Lyon", "Lyon sightseeing", "Lyon travel", "France Lyon", "Lyon complete guide"],
-      },
-      openers: {
-        zh: [
-          "リヨン旅行の全体像を最初に把握したい人に向いているのが",
-          "フランスの地方都市を比較している読者へ先に見せたい入口として使いやすいのが",
-          "初回のリヨン旅行で街の輪郭をつかみたいなら、まず開いておきたいのが",
-          "里昂という都市がどんな旅先かを短時間で理解したい時に便利なのが",
-          "世界遺産の旧市街や街歩きの雰囲気を含めてリヨンを俯瞰したいなら、入口として役立つのが",
-          "ホテルや空港ページへ入る前に、まず街全体の判断軸をつかむ導入としておすすめなのが",
-          "旅行前にリヨンの印象、治安感覚、滞在日数の目安をまとめて確認するなら見ておきたいのが",
-          "パリの次にどの都市へ行くか迷っている人へ、候補比較の入口として紹介しやすいのが",
-        ],
-        en: [
-          "A useful starting point for anyone who wants to understand Lyon travel at a glance is",
-          "If readers are comparing French regional cities, an easy entry page to surface early is",
-          "For a first trip to Lyon, one practical page to open before going deeper is",
-          "When someone wants to quickly understand what kind of destination Lyon is, a helpful overview is",
-          "If the goal is to frame Lyon through its UNESCO old town, city atmosphere, and travel basics, a strong entry page is",
-          "Before diving into hotel or airport details, a good homepage to set the overall planning context is",
-          "For travelers who want to sort out Lyon's vibe, safety framing, and ideal stay length before planning, a useful starting page is",
-          "If someone is deciding which city to visit after Paris, a natural comparison entry is",
-        ],
-      },
-      angles: {
-        zh: [
-          "世界遺産の旧市街、街の雰囲気、治安の考え方、滞在日数の目安を日本語でまとめていて、最初の判断がしやすいです。",
-          "ホーム上で街の概要をつかんだ後、そのままホテル、空港、市内到着、グルメ、モデルコースに分岐できます。",
-          "フランスの都市としてのリヨンを扱っていて、Gare de Lyon やサッカー関連と混同しない導線が明確です。",
-          "旧市街、Fourviere、Presqu'ile、Croix-Rousse など、初回旅行で押さえるべき街区の輪郭が入り口で整理されています。",
-          "観光だけでなく、食文化、宿泊判断、空港アクセスまでを含めた旅行全体の入口として機能します。",
-        ],
-        en: [
-          "It organizes UNESCO old town context, city atmosphere, safety framing, and ideal stay length in Japanese, which makes the first planning step easier.",
-          "Once readers grasp the city overview, they can branch from the homepage into hotels, airport access, city arrival, food, and itinerary planning.",
-          "It clearly focuses on Lyon as a French city, so it avoids confusion with Gare de Lyon or football-related searches.",
-          "The homepage outlines key areas such as the old town, Fourviere, Presqu'ile, and Croix-Rousse for first-time visitors.",
-          "The page works as a full trip entry point, not just for sightseeing but also for food, accommodation choices, and airport access.",
-        ],
-      },
-    },
-    hotel: {
-      route: "/hotel/",
-      targetUrl: `${targetSite}/hotel/`,
-      count: 32,
-      name: {
-        zh: "リヨン 酒店页",
-        en: "Lyon Hotels Page",
-      },
-      summary: {
-        zh: "本页只服务 `/hotel/`，文案聚焦住宿区域、选区逻辑、预算与订前判断，不把机场、路线或美食意图混进来。",
-        en: "This page only serves `/hotel/`. The copy stays focused on accommodation areas, where-to-stay decisions, budget framing, and pre-booking judgment without mixing airport, food, or itinerary intent.",
-      },
-      meta: {
-        zh: "酒店页核心是“住哪里更方便”。文案围绕 Presqu'ile、Vieux-Lyon、Part-Dieu、Confluence、Croix-Rousse 的差异，以及预算和行程匹配来组织。",
-        en: "The hotel page is about where to stay in Lyon. The copy is organized around the differences between Presqu'ile, Vieux-Lyon, Part-Dieu, Confluence, and Croix-Rousse, plus budget and trip-fit decisions.",
-      },
-      intents: {
-        zh: ["宿泊区域", "酒店推荐", "预算判断", "车站便利", "订前检查"],
-        en: ["Stay areas", "Hotel picks", "Budget framing", "Station access", "Pre-booking checks"],
-      },
-      anchors: {
-        zh: ["リヨン ホテル", "リヨン 宿泊", "リヨン おすすめ ホテル", "リヨン ホテル おすすめ 地区", "リヨンのホテルガイド"],
-        en: ["Lyon hotels", "Lyon stay", "best hotels in Lyon", "where to stay in Lyon", "Lyon hotel guide"],
-      },
-      openers: {
-        zh: [
-          "リヨンでどこに泊まるかを先に決めたい人へ案内しやすいのが",
-          "観光しやすさと駅アクセスを両方見ながらホテルを選びたいなら役立つのが",
-          "ホテル名の比較より先に、宿泊エリアの違いから整理したい時に向いているのが",
-          "初回のリヨン滞在で外しにくい地区を知りたい人へ自然に紹介できるのが",
-          "Presqu'ile、Vieux-Lyon、Part-Dieu のどこに泊まるべきかを考える入口として使いやすいのが",
-          "予算、雰囲気、坂道の有無、駅近の優先度まで含めて宿選びを整理したいならおすすめなのが",
-          "観光メインか、移動重視か、家族旅行かでホテル選びを分けて考えたい人に向いているのが",
-          "予約前に“自分に合うエリア”を先に見極めたい旅行者へ渡しやすいのが",
-        ],
-        en: [
-          "A useful page for travelers who want to decide where to stay in Lyon first is",
-          "If someone wants to balance sightseeing convenience with station access, a helpful hotel page is",
-          "When the goal is to compare districts before comparing hotel names, a strong starting point is",
-          "For first-time visitors who want low-risk accommodation areas, an easy page to recommend is",
-          "If readers are weighing Presqu'ile, Vieux-Lyon, and Part-Dieu, a natural hotel guide to share is",
-          "When budget, atmosphere, slopes, and station proximity all matter, a practical planning page is",
-          "For travelers deciding between sightseeing-first, transit-first, or family-friendly stays, a useful reference is",
-          "If someone wants to identify the right district before booking, a clear page to send them to is",
-        ],
-      },
-      angles: {
-        zh: [
-          "中心部に泊まるか、駅近を優先するか、雰囲気重視で旧市街に寄せるかを比較しやすく整理しています。",
-          "Presqu'ile、Vieux-Lyon、Part-Dieu、Confluence、Croix-Rousse の違いを旅行者目線で見比べやすいです。",
-          "予算別、目的別、予約前チェックまでまとまっていて、ホテル名だけで決める失敗を減らせます。",
-          "観光動線と宿泊エリアの相性を先に理解できるので、初回のリヨン宿泊判断がかなり楽になります。",
-        ],
-        en: [
-          "It helps readers compare whether to prioritize the center, station access, or atmosphere in the old town before booking anything.",
-          "The page makes it easy to compare Presqu'ile, Vieux-Lyon, Part-Dieu, Confluence, and Croix-Rousse from a traveler point of view.",
-          "Because it also covers budget, trip purpose, and pre-booking checks, it reduces the risk of choosing only by hotel name.",
-          "It gives readers a clearer match between sightseeing flow and accommodation area, which makes a first Lyon stay much easier to plan.",
-        ],
-      },
-    },
-    airport: {
-      route: "/airport/",
-      targetUrl: `${targetSite}/airport/`,
-      count: 32,
-      name: {
-        zh: "リヨン 机场页",
-        en: "Lyon Airport Access Page",
-      },
-      summary: {
-        zh: "本页只服务 `/airport/`，聚焦里昂机场到市区的进入逻辑、Rhônexpress、出租车和接驳判断，不扩展成机场百科。",
-        en: "This page only serves `/airport/`. It stays focused on how to get from Lyon airport into the city, including Rhônexpress, taxi choices, and arrival logic, without turning into a generic airport encyclopedia.",
-      },
-      meta: {
-        zh: "机场页处理的是“到达以后怎么进城”。文案围绕 Lyon-Saint Exupéry 空港、Rhônexpress、出租车、空港站和市内接驳来组织。",
-        en: "The airport page handles the arrival question: how to get into Lyon after landing. The copy is built around Lyon-Saint Exupéry airport, Rhônexpress, taxis, the airport station, and city connections.",
-      },
-      intents: {
-        zh: ["机场到达", "市区进入", "Rhônexpress", "出租车判断", "换乘逻辑"],
-        en: ["Airport arrival", "City access", "Rhônexpress", "Taxi decision", "Connection logic"],
-      },
-      anchors: {
-        zh: ["リヨン 空港 アクセス", "リヨン 空港", "リヨン 空港 から 市内", "リヨン空港から中心部への行き方", "リヨン 空港 アクセス"],
-        en: ["Lyon airport access", "Lyon airport", "from Lyon airport to city center", "how to get from Lyon airport to downtown", "Lyon airport transport"],
-      },
-      openers: {
-        zh: [
-          "リヨン空港に着いてから市内へどう入るかを先に整理したい人に向いているのが",
-          "Rhônexpress とタクシーのどちらを選ぶべきか迷う旅行者へ案内しやすいのが",
-          "初回のリヨン到着で“迷いにくい入り方”を知りたい時に見せやすいのが",
-          "空港からホテルまでの動線を先に固めたい人へ自然に紹介できるのが",
-          "Lyon-Saint Exupery 空港から中心部までの考え方を日本語で把握したいなら便利なのが",
-          "深夜到着、荷物多め、複数人移動など条件別に空港アクセスを考えたい人へ役立つのが",
-          "市内交通にどうつなぐかまで含めて、到着後の流れを読みたい旅行者へおすすめなのが",
-          "空港駅や Rhonexpress の立ち位置を先に理解しておきたいなら見ておきたいのが",
-        ],
-        en: [
-          "A useful page for travelers who want to decide how to get into Lyon after landing is",
-          "If someone is unsure whether to choose Rhônexpress or a taxi, a practical airport page to share is",
-          "For a first arrival in Lyon, one page that helps people pick the least confusing entry option is",
-          "If the goal is to lock in the route from the airport to the hotel, a natural reference is",
-          "When readers want a Japanese guide to Lyon-Saint Exupéry airport and the city-center transfer logic, a helpful page is",
-          "For late arrivals, heavy luggage, or small groups comparing airport options, a useful planning page is",
-          "If someone wants to understand how airport transport connects with city transit, a strong page to recommend is",
-          "When readers want to understand the role of the airport station and Rhônexpress before arrival, an easy guide is",
-        ],
-      },
-      angles: {
-        zh: [
-          "Rhônexpress を基本線にしつつ、タクシーや配車の方が合理的になる条件も整理されていて判断しやすいです。",
-          "空港から中心部へ入る導線だけでなく、Part-Dieu や旧市街へ向かうイメージまで持ちやすくなります。",
-          "時刻や料金を固定表で押し付けず、到着条件ごとにどの選択が向くかを読む構成になっています。",
-          "初回のリヨン到着で余計なストレスを減らしたい人にちょうどよい実用ページです。",
-        ],
-        en: [
-          "It frames Rhônexpress as the default while also explaining when taxis or ride-hailing make more sense.",
-          "The page helps readers picture not only the airport transfer itself but also how that transfer connects into Part-Dieu or the old town.",
-          "Instead of forcing a fixed timetable table, it explains which choice fits which arrival condition.",
-          "It is a practical page for first-time Lyon arrivals who want to reduce confusion and stress after landing.",
-        ],
-      },
-    },
-    "paris-lyon": {
-      route: "/paris-lyon/",
-      targetUrl: `${targetSite}/paris-lyon/`,
-      count: 32,
-      name: {
-        zh: "パリからリヨン页",
-        en: "Paris to Lyon Page",
-      },
-      summary: {
-        zh: "本页只服务 `/paris-lyon/`，聚焦巴黎到里昂的 TGV、OUIGO、电车与移动判断，不混入单独的车站百科。",
-        en: "This page only serves `/paris-lyon/`. It focuses on Paris-to-Lyon transit decisions around TGV, OUIGO, trains, and route choice without drifting into a generic station reference page.",
-      },
-      meta: {
-        zh: "巴黎到里昂页处理的是“从巴黎怎么去里昂”。文案围绕 TGV、OUIGO、出发站、到着站、所要感和订票顺序来组织。",
-        en: "The Paris-to-Lyon page is about how to get from Paris to Lyon. The copy is structured around TGV, OUIGO, departure and arrival stations, travel-time expectations, and booking sequence.",
-      },
-      intents: {
-        zh: ["巴黎出发", "TGV 判断", "OUIGO", "车站理解", "预约顺序"],
-        en: ["Paris departure", "TGV choice", "OUIGO", "Station context", "Booking order"],
-      },
-      anchors: {
-        zh: ["パリ から リヨン", "パリ リヨン tgv", "パリ から リヨン 電車", "パリからリヨンへの行き方", "パリ リヨン 移動"],
-        en: ["Paris to Lyon", "Paris Lyon TGV", "train from Paris to Lyon", "how to get from Paris to Lyon", "Paris Lyon transport"],
-      },
-      openers: {
-        zh: [
-          "パリからリヨンへどう移動するのが基本かを先に整理したい人へ渡しやすいのが",
-          "TGV と OUIGO の違いや、どの駅を基準に考えるべきかを知りたいなら役立つのが",
-          "パリ滞在の途中でリヨンへ足を伸ばす計画を立てる人に向いているのが",
-          "日帰りか宿泊込みかを含めて、パリからリヨンの移動判断をしたい時に使いやすいのが",
-          "Gare de Lyon と都市リヨンを混同せずに、交通だけを整理したい人へ紹介しやすいのが",
-          "電車、TGV、飛行機、車の立ち位置を旅行者目線で比較したいなら便利なのが",
-          "到着後すぐ観光へつなげたい人へ、移動の考え方を最短で読ませやすいのが",
-          "パリからリヨンへの行き方を日本語で俯瞰したい旅行者にちょうどよいのが",
-        ],
-        en: [
-          "A useful page for travelers who want to decide the default way to get from Paris to Lyon is",
-          "If readers want to understand the difference between TGV and OUIGO and which station to think from, a helpful guide is",
-          "For people adding Lyon to a Paris-based trip, a practical transit page to share is",
-          "When someone is deciding between a day trip and an overnight stay from Paris to Lyon, a clear reference is",
-          "If the goal is to avoid confusion between Gare de Lyon and the city of Lyon while focusing only on transport, a strong page is",
-          "When travelers want a side-by-side view of train, TGV, plane, and car options, an easy page to recommend is",
-          "For readers who want to connect arrival straight into sightseeing, a useful transit-planning page is",
-          "If someone wants a Japanese overview of how to get from Paris to Lyon, a practical entry is",
-        ],
-      },
-      angles: {
-        zh: [
-          "まず TGV を基準に考えるべき理由が整理されていて、OUIGO や他手段をどう条件付きで選ぶかも読みやすいです。",
-          "Paris Gare de Lyon や Lyon Part-Dieu といった駅名の理解まで含めて、初見の混乱を減らしやすいです。",
-          "料金を固定値で断言せず、予約時期や時間帯で変わる前提で説明しているので現実的です。",
-          "パリからリヨンへ移動したその後の街歩きまで想定した交通判断ページとして使いやすいです。",
-        ],
-        en: [
-          "It explains why TGV should be the baseline and then shows when OUIGO or other options make sense under specific conditions.",
-          "Because it also clarifies names like Paris Gare de Lyon and Lyon Part-Dieu, it reduces first-time confusion.",
-          "Instead of pretending there is a fixed fare, it explains how timing and booking windows change the price logic.",
-          "It works well as a transit-decision page that also anticipates what happens once readers arrive and start exploring Lyon.",
-        ],
-      },
-    },
-    gourmet: {
-      route: "/gourmet/",
-      targetUrl: `${targetSite}/gourmet/`,
-      count: 32,
-      name: {
-        zh: "リヨン 美食页",
-        en: "Lyon Food Page",
-      },
-      summary: {
-        zh: "本页只服务 `/gourmet/`，围绕里昂吃什么、去哪吃、买什么带回去来组织，不扩展成泛法餐百科。",
-        en: "This page only serves `/gourmet/`. It is organized around what to eat in Lyon, where to eat, and what to buy as gifts, without turning into a generic French-food encyclopedia.",
-      },
-      meta: {
-        zh: "美食页覆盖ブション、レストラン、名物、スイーツ、Bernachon 与お土産。文案强调旅行中的食决策，而不是餐厅榜单堆砌。",
-        en: "The food page covers bouchons, restaurants, local specialties, sweets, Bernachon, and souvenirs. The copy emphasizes travel decisions around food, not just list-style rankings.",
-      },
-      intents: {
-        zh: ["ブション", "レストラン", "名物", "甜点巧克力", "伴手礼"],
-        en: ["Bouchons", "Restaurants", "Local food", "Sweets and chocolate", "Souvenirs"],
-      },
-      anchors: {
-        zh: ["リヨン グルメ", "リヨン レストラン", "リヨン ブション", "リヨン お土産", "ベルナシオン リヨン"],
-        en: ["Lyon food", "Lyon restaurants", "Lyon bouchons", "Lyon souvenirs", "Bernachon Lyon"],
-      },
-      openers: {
-        zh: [
-          "リヨンで何を食べるべきかを先に整理したい人へ渡しやすいのが",
-          "ブション、スイーツ、チョコ、お土産まで含めて食の判断軸を見たいなら役立つのが",
-          "リヨンのレストランをランキングではなく用途別に考えたい旅行者へ紹介しやすいのが",
-          "初回のリヨンで“何を食べれば街らしさが出るか”を知りたい人に向いているのが",
-          "ブションに行くべきか、甘い物を優先するべきか、土産をどこで買うかまで考えたいなら便利なのが",
-          "ベルナシオンや Halles を含めて、里昂の食文化を旅行者目線でつかみたい時におすすめなのが",
-          "食の街リヨンをどう楽しむかの入口として、自然に案内しやすいのが",
-          "レストラン予約前に“何を食べたい旅なのか”を先に整理したい人へ見せやすいのが",
-        ],
-        en: [
-          "A useful page for travelers who want to decide what to eat in Lyon first is",
-          "If readers want one food page that covers bouchons, sweets, chocolate, and souvenirs, a helpful guide is",
-          "When someone wants to think about Lyon restaurants by use case rather than rankings, a strong page is",
-          "For first-time visitors who want to know what food best represents Lyon, an easy page to recommend is",
-          "If the goal is to decide between bouchons, sweets, and gift buying, a natural page to share is",
-          "For readers who want a traveler-focused view of Lyon food culture including Bernachon and Halles, a useful page is",
-          "As an entry point for how to enjoy Lyon as a food city, this is easy to cite",
-          "When someone wants to decide what kind of food trip they want before making reservations, a practical page is",
-        ],
-      },
-      angles: {
-        zh: [
-          "ブションの考え方、名物料理、スイーツ、チョコレート、お土産の動線まで一続きで読める構成です。",
-          "“とにかく有名店”ではなく、旅行中の食事体験として何を優先するかを決めやすいです。",
-          "ベルナシオンや Halles de Lyon-Paul Bocuse を含めて、里昂らしい食の輪郭をつかみやすくなります。",
-          "リヨンで食べる・買うを一度に整理したい人にちょうどよいグルメ導線ページです。",
-        ],
-        en: [
-          "It connects bouchons, signature dishes, sweets, chocolate, and souvenir shopping in a single planning flow.",
-          "Rather than pushing only famous names, it helps readers decide what kind of food experience to prioritize during the trip.",
-          "Because it includes Bernachon and Halles de Lyon-Paul Bocuse, it gives a stronger sense of what makes Lyon food culture distinctive.",
-          "It works well as one focused page for travelers who want to organize both eating and buying in Lyon at the same time.",
-        ],
-      },
-    },
-    "model-course": {
-      route: "/model-course/",
-      targetUrl: `${targetSite}/model-course/`,
-      count: 32,
-      name: {
-        zh: "リヨン 模型路线页",
-        en: "Lyon Itinerary Page",
-      },
-      summary: {
-        zh: "本页只服务 `/model-course/`，围绕半日、1 日、2 日以上的回法做路线导向，不与首页的 broad intent 混合。",
-        en: "This page only serves `/model-course/`. It focuses on route planning for half-day, one-day, and two-day-plus Lyon trips without mixing in the broad homepage intent.",
-      },
-      meta: {
-        zh: "模型路线页解决的是“有限时间怎么回里昂”。文案围绕半日、1 日、2 日、区块取舍、顺路感和人群差异来组织。",
-        en: "The itinerary page answers how to move through Lyon with limited time. The copy is organized around half-day, one-day, and two-day routes, tradeoffs between districts, route order, and traveler type differences.",
-      },
-      intents: {
-        zh: ["半日", "1 日", "2 日", "路线顺序", "回法判断"],
-        en: ["Half day", "One day", "Two days", "Route order", "Itinerary decisions"],
-      },
-      anchors: {
-        zh: ["リヨン 観光 モデル コース", "リヨン モデル コース", "リヨン 観光 1 日", "リヨン 観光 半日", "リヨン観光の回り方"],
-        en: ["Lyon itinerary", "Lyon sightseeing itinerary", "one day in Lyon", "half-day in Lyon", "how to see Lyon"],
-      },
-      openers: {
-        zh: [
-          "リヨンを何日でどう回るかを先に決めたい人へ案内しやすいのが",
-          "半日、1 日、2 日以上でどこを削ってどこを残すかを考えたいなら役立つのが",
-          "初回のリヨン観光で“回り方の正解”を最短でつかみたい旅行者へ渡しやすいのが",
-          "旧市街、Fourviere、Presqu'ile、Croix-Rousse をどう組み合わせるかを見たいなら便利なのが",
-          "短い滞在でもリヨンらしさを感じる順路を考えたい人に向いているのが",
-          "ひとり旅、家族連れ、雨の日など条件でルートを調整したい時に紹介しやすいのが",
-          "観光地の羅列より、時間軸でルートを組みたい人へおすすめなのが",
-          "里昂で“どこから回ってどこで終えるか”まで実用的に読みたいなら見ておきたいのが",
-        ],
-        en: [
-          "A useful page for travelers who want to decide how many days to spend in Lyon and how to structure the route is",
-          "If readers want to know what to cut and what to keep in a half-day, one-day, or two-day visit, a practical guide is",
-          "For first-time visitors who want the clearest Lyon sightseeing flow, an easy page to recommend is",
-          "When someone wants to understand how to combine the old town, Fourviere, Presqu'ile, and Croix-Rousse, a helpful itinerary page is",
-          "If the goal is to feel Lyon even on a short stay, a strong route-planning page is",
-          "For travelers adjusting plans for solo travel, families, or rainy days, a useful page is",
-          "When readers prefer time-based routes over simple attraction lists, a natural guide to share is",
-          "If someone wants a practical answer to where to start and where to end a Lyon sightseeing day, a clear reference is",
-        ],
-      },
-      angles: {
-        zh: [
-          "半日、1 日、2 日以上の差が整理されていて、自分の滞在時間に合うモデルコースを選びやすいです。",
-          "旧市街と Fourviere を軸にしつつ、Presqu'ile や Croix-Rousse をどう足すかの判断がしやすいです。",
-          "順番、休憩、移動のつながりまで含めて考えるので、名所一覧だけ見るより実用的です。",
-          "限られた時間で“リヨンらしさ”を残したい旅行者に向いた回り方ページです。",
-        ],
-        en: [
-          "It makes the difference between a half-day, one-day, and two-day-plus Lyon trip easy to compare.",
-          "The page helps readers decide how to build around the old town and Fourviere, then add Presqu'ile or Croix-Rousse if time allows.",
-          "Because it considers order, breaks, and movement between areas, it is more practical than a simple attraction list.",
-          "It works well for travelers who want a route that still feels meaningfully Lyon even when time is limited.",
-        ],
-      },
-    },
-  };
-
   const rows = document.getElementById("rows");
   const status = document.getElementById("status");
   const keywordChips = document.getElementById("keyword-chips");
   const intentChips = document.getElementById("intent-chips");
-  const state = { language: "zh" };
+  const copyLanguageControls = document.getElementById("copy-language-controls");
+
+  const localeLabels = {
+    ja: "日本語",
+    en: "English",
+  };
+
+  const pages = {
+    home: {
+      targetUrl: "https://xn--cekd2a.net/",
+      count: 40,
+      title: "リヨン 首页外链建设文案 40 条",
+      shortName: "リヨン 首页",
+      summary:
+        "本页只服务里昂站首页 `/`。主关键词只是参考，表格里的锚文本会偏向自然评论分布，更多使用“城市入口页”“这份里昂整理”“旅行起点”这类自然表达。",
+      meta:
+        "首页承担城市入口、世界遗产、治安感知、旅行基础判断与站内分流。文案会把用户先带到首页，再由首页分流到酒店、机场、巴黎出发、美食与模型路线。",
+      intents: ["城市入口", "世界遗产", "治安判断", "旅行基础", "站内分流"],
+      copyLocales: {
+        ja: {
+          anchors: [
+            "リヨンの旅行メモ",
+            "このリヨン案内",
+            "街の全体像がまとまったページ",
+            "リヨン観光の入口",
+            "旅の出発点になるページ",
+            "この街の総合ページ",
+            "リヨン完全ガイド",
+            "リヨンのまとめ",
+            "リヨン",
+            "リヨン 観光",
+          ],
+          starters: [
+            "初回なら{anchor}から入ると、",
+            "まず{anchor}を見ておくと、",
+            "ホテルや空港の前に{anchor}を挟んでおくと、",
+            "人に一本だけ渡すなら{anchor}が無難で、",
+            "街全体をつかむ用途なら{anchor}が使いやすく、",
+            "旅行計画の出発点としては{anchor}が自然で、",
+            "細かい予約へ行く前なら{anchor}を先に見た方がよく、",
+            "パリの次にどこへ行くか比較する人には{anchor}が渡しやすく、",
+          ],
+          reasons: [
+            "旧市街や街の空気感を先に掴みやすく、",
+            "世界遺産、治安感覚、滞在日数の目安が一度に見え、",
+            "リヨンを都市として理解してから各内ページへ進みやすく、",
+            "ホテル、空港、グルメ、回り方への分岐が読みやすく、",
+            "Gare de Lyon やサッカー関連との混同を避けやすく、",
+            "初回旅行で押さえるべき地区の輪郭を先に作りやすく、",
+          ],
+          closers: [
+            "そのあとに必要なテーマへ迷わず進みやすいです。",
+            "最初の判断ページとしてかなり使いやすいです。",
+            "旅行全体の流れを立てる入口としてちょうどいいです。",
+            "広めの検索意図を受ける入口として自然に紹介できます。",
+            "細かいページに入る前の総論として置きやすいです。",
+          ],
+        },
+        en: {
+          anchors: [
+            "this Lyon overview",
+            "the city-entry page here",
+            "this Lyon trip guide",
+            "the main Lyon page",
+            "this starting page",
+            "the overview here",
+            "the Lyon guide",
+            "the city summary",
+            "Lyon",
+            "Lyon travel",
+          ],
+          starters: [
+            "For a first look at the city, {anchor} works well because",
+            "If someone needs the overall picture first, {anchor} is useful because",
+            "Before hotel or airport details, {anchor} is a sensible page because",
+            "If I had to share one Lyon entry point, {anchor} is an easy choice because",
+            "For broad travel intent, {anchor} is a natural place to start because",
+            "When readers are still deciding whether Lyon fits the trip, {anchor} helps because",
+            "If the plan is still rough, {anchor} is a safe page to send because",
+            "For people comparing Lyon with other French cities, {anchor} is helpful because",
+          ],
+          reasons: [
+            "it frames the old town, atmosphere, and stay-length expectations,",
+            "it gives the city context before the more tactical pages,",
+            "it keeps heritage, safety framing, and travel basics in one place,",
+            "it makes the handoff into hotels, airport access, food, and routes easier,",
+            "it helps readers understand Lyon as a city instead of a station-name query,",
+            "it sets up the districts and major themes without making the reader jump around,",
+          ],
+          closers: [
+            "so it works well as a natural comment-style recommendation.",
+            "which makes it a clean starting point in a comment thread.",
+            "so the next click usually makes more sense.",
+            "which is enough for the first planning decision.",
+            "so it fits a broad, non-spammy backlink placement.",
+          ],
+        },
+      },
+    },
+    hotel: {
+      targetUrl: "https://xn--cekd2a.net/hotel/",
+      count: 32,
+      title: "リヨン 酒店页外链建设文案 32 条",
+      shortName: "リヨン 酒店页",
+      summary:
+        "本页只服务 `/hotel/`。锚文本不会机械地重复 `リヨン ホテル`，而是更多用“住哪里”“这份住宿区整理”“这个酒店页”等自然评论表达。",
+      meta:
+        "酒店页解决的是“住哪里更方便”。文案围绕 Presqu'ile、Vieux-Lyon、Part-Dieu、Confluence、Croix-Rousse 的差异，以及预算和行程匹配来组织。",
+      intents: ["住宿区域", "选区逻辑", "预算判断", "车站便利", "订前检查"],
+      copyLocales: {
+        ja: {
+          anchors: [
+            "この宿泊エリア整理",
+            "リヨンで泊まるならこのページ",
+            "ホテル選びのまとめ",
+            "どこに泊まるかの整理",
+            "このホテルガイド",
+            "滞在エリアの見方",
+            "リヨンのホテル事情",
+            "リヨン ホテル",
+            "リヨン 宿泊",
+          ],
+          starters: [
+            "どこに泊まるかで迷うなら{anchor}から入ると、",
+            "ホテル名を見る前に{anchor}を挟むと、",
+            "初回の宿選びでは{anchor}が役立ち、",
+            "駅近か中心部かを迷っている人には{anchor}が渡しやすく、",
+            "宿泊エリアの違いを先に見たいなら{anchor}が使いやすく、",
+            "観光優先か移動優先かを決める段階では{anchor}が自然で、",
+            "予約前の判断材料としては{anchor}がちょうどよく、",
+            "人にホテル相談を返す時は{anchor}を貼ると説明しやすく、",
+          ],
+          reasons: [
+            "Presqu'ile、旧市街、Part-Dieu の違いが先に入り、",
+            "雰囲気、坂道、駅アクセス、予算感の差が見えやすく、",
+            "ホテル名だけで決める失敗を減らしやすく、",
+            "観光動線と宿泊地の相性を先に判断しやすく、",
+            "家族旅行か一人旅かで合う地区を分けて考えやすく、",
+            "予約前に外しにくい選択肢が見えやすく、",
+          ],
+          closers: [
+            "初回のリヨン滞在ではかなり実用的です。",
+            "宿選びの入口として自然に置けます。",
+            "ホテル比較より前の判断ページとして使いやすいです。",
+            "コメントで一本返す用途にも向いています。",
+            "エリア理解から入れるので失敗しにくいです。",
+          ],
+        },
+        en: {
+          anchors: [
+            "this stay guide",
+            "the district breakdown here",
+            "this Lyon hotel page",
+            "the where-to-stay guide",
+            "this accommodation page",
+            "the hotel guide here",
+            "the stay-area summary",
+            "Lyon hotels",
+            "where to stay in Lyon",
+          ],
+          starters: [
+            "If someone is stuck on where to stay, {anchor} is a better first link because",
+            "Before comparing hotel names, {anchor} is useful because",
+            "For first-time visitors, {anchor} helps because",
+            "If the choice is basically center versus station access, {anchor} is practical because",
+            "When readers need the districts explained first, {anchor} works well because",
+            "For accommodation planning, {anchor} is a natural page because",
+            "If budget and atmosphere both matter, {anchor} is worth sending because",
+            "In comment threads about where to stay, {anchor} is usually the cleaner recommendation because",
+          ],
+          reasons: [
+            "it compares Presqu'ile, Vieux-Lyon, Part-Dieu, and the outlying options first,",
+            "it explains atmosphere, slope, transit, and convenience tradeoffs in one place,",
+            "it reduces the risk of choosing only by hotel name or star rating,",
+            "it helps readers match the district to the shape of the trip,",
+            "it makes budget and trip-purpose tradeoffs easier to see,",
+            "it gives a clearer pre-booking framework than a raw list of properties,",
+          ],
+          closers: [
+            "so it reads like a normal planning recommendation, not keyword stuffing.",
+            "which makes it easy to drop into a useful reply.",
+            "so the next booking step usually becomes simpler.",
+            "which is exactly what a practical comment link should do.",
+            "so it fits natural discussion around Lyon accommodation.",
+          ],
+        },
+      },
+    },
+    airport: {
+      targetUrl: "https://xn--cekd2a.net/airport/",
+      count: 32,
+      title: "リヨン 机场页外链建设文案 32 条",
+      shortName: "リヨン 机场页",
+      summary:
+        "本页只服务 `/airport/`。锚文本会偏向“机场进城”“这份到达页”“这个入城说明”这类自然表达，而不是持续精确重复 `リヨン 空港 アクセス`。",
+      meta:
+        "机场页处理的是“到达以后怎么进城”。文案围绕 Lyon-Saint Exupéry 空港、Rhônexpress、出租车、空港站和市内接驳来组织。",
+      intents: ["机场到达", "市区进入", "Rhônexpress", "出租车判断", "换乘逻辑"],
+      copyLocales: {
+        ja: {
+          anchors: [
+            "この空港アクセス整理",
+            "空港から市内へ入るページ",
+            "この到着後ガイド",
+            "リヨン空港から中心部への案内",
+            "この入城メモ",
+            "空港後の流れがまとまったページ",
+            "この空港ページ",
+            "リヨン 空港",
+            "リヨン 空港 アクセス",
+          ],
+          starters: [
+            "空港からどう入るか迷うなら{anchor}を先に見ておくと、",
+            "Rhônexpress とタクシーで迷っている人には{anchor}が渡しやすく、",
+            "初回到着なら{anchor}を挟んでおくと、",
+            "ホテルまでの入り方を固めたい時は{anchor}が役立ち、",
+            "深夜到着や荷物多めなら{anchor}を見た方がよく、",
+            "到着後のストレスを減らしたい人には{anchor}が自然で、",
+            "市内交通へのつなぎ方も含めて見るなら{anchor}が使いやすく、",
+            "空港駅や Rhonexpress の立ち位置を整理したいなら{anchor}が便利で、",
+          ],
+          reasons: [
+            "Rhônexpress を基本線にしつつ他手段の条件差も入り、",
+            "荷物量、到着時間、人数で選択肢を見分けやすく、",
+            "中心部へ入った後の動線まで想像しやすく、",
+            "時刻表の細部より選び方のロジックを先に掴みやすく、",
+            "Part-Dieu や旧市街へつなぐイメージが持ちやすく、",
+            "初回到着で迷いにくい順路を作りやすく、",
+          ],
+          closers: [
+            "到着日に余計な消耗をしにくくなります。",
+            "実用寄りの空港ページとしてかなり使いやすいです。",
+            "空港からの第一歩を決める用途に向いています。",
+            "コメントで紹介しても不自然さが出にくいです。",
+            "到着直後の判断ページとしてちょうどいいです。",
+          ],
+        },
+        en: {
+          anchors: [
+            "this airport access guide",
+            "the city-entry page here",
+            "this arrival page",
+            "the airport transfer guide",
+            "this airport note",
+            "the post-landing guide",
+            "this airport page",
+            "Lyon airport",
+            "Lyon airport access",
+          ],
+          starters: [
+            "If someone is unsure how to get into town, {anchor} is useful because",
+            "For Rhônexpress versus taxi questions, {anchor} is a helpful page because",
+            "If the concern is what to do after landing, {anchor} works well because",
+            "For first arrivals, {anchor} is easy to recommend because",
+            "If the hotel transfer is still unclear, {anchor} makes sense because",
+            "When luggage, timing, and group size all matter, {anchor} is practical because",
+            "For comments about airport-to-city transfer, {anchor} feels natural because",
+            "If readers want the arrival flow without airport trivia, {anchor} is a strong page because",
+          ],
+          reasons: [
+            "it frames Rhônexpress as the baseline but still explains when taxis win,",
+            "it helps people choose based on arrival conditions instead of memorizing a rigid table,",
+            "it connects the airport decision to where the reader is actually headed in the city,",
+            "it keeps the focus on the transfer logic rather than generic airport information,",
+            "it makes the first post-landing decision easier to sort out,",
+            "it gives a cleaner city-entry picture for first-time visitors,",
+          ],
+          closers: [
+            "so it reads like a real travel reply, not a forced keyword link.",
+            "which is why it works well in comment-style placements.",
+            "so the link feels useful instead of overly optimized.",
+            "which is usually the tone people expect in travel discussions.",
+            "so it fits a natural answer to arrival questions.",
+          ],
+        },
+      },
+    },
+    "paris-lyon": {
+      targetUrl: "https://xn--cekd2a.net/paris-lyon/",
+      count: 32,
+      title: "パリからリヨン页外链建设文案 32 条",
+      shortName: "パリからリヨン页",
+      summary:
+        "本页只服务 `/paris-lyon/`。锚文本会更像正常评论里的“巴黎到里昂怎么走”“这份 TGV 整理”“这个交通页”，不会高频机械复读精确词。",
+      meta:
+        "巴黎到里昂页解决的是“从巴黎怎么去里昂”。文案围绕 TGV、OUIGO、出发站、到着站、所要感和订票顺序来组织。",
+      intents: ["巴黎出发", "TGV 判断", "OUIGO", "站名理解", "预约顺序"],
+      copyLocales: {
+        ja: {
+          anchors: [
+            "このパリ発ガイド",
+            "パリからどう入るかの整理",
+            "この TGV のまとめ",
+            "パリからリヨンへの移動ページ",
+            "この交通メモ",
+            "電車で入る時の整理",
+            "この行き方ページ",
+            "パリ から リヨン",
+            "パリ リヨン tgv",
+          ],
+          starters: [
+            "パリから入るなら{anchor}を先に見た方がよく、",
+            "TGV と OUIGO の違いで迷う人には{anchor}が渡しやすく、",
+            "駅名で混乱しそうなら{anchor}が役立ち、",
+            "日帰りか宿泊込みかを考える段階では{anchor}が自然で、",
+            "Paris Gare de Lyon まわりを整理したいなら{anchor}が便利で、",
+            "移動手段を一度俯瞰したい人には{anchor}が使いやすく、",
+            "到着後すぐ観光へつなげたいなら{anchor}を挟むと、",
+            "電車中心で考える人には{anchor}が最初の一枚としてちょうどよく、",
+          ],
+          reasons: [
+            "まず TGV を基準に考えるべき理由が先に入り、",
+            "OUIGO や他手段をどんな条件で選ぶかも見え、",
+            "Paris Gare de Lyon と都市リヨンの混同を避けやすく、",
+            "予約順と料金の見方をざっくり掴みやすく、",
+            "到着駅の違いまで含めて全体像を持ちやすく、",
+            "移動後の動線までイメージしやすく、",
+          ],
+          closers: [
+            "パリ発の判断ページとしてかなり実用的です。",
+            "移動相談への返答として自然に置けます。",
+            "駅名で迷う人にも渡しやすいです。",
+            "交通だけを整理したい時にちょうどいいです。",
+            "コメントでも過度に SEO っぽく見えにくいです。",
+          ],
+        },
+        en: {
+          anchors: [
+            "this Paris-to-Lyon guide",
+            "the TGV breakdown here",
+            "this transit page",
+            "the Paris departure guide",
+            "this route note",
+            "the train-focused guide",
+            "this travel page",
+            "Paris to Lyon",
+            "Paris Lyon TGV",
+          ],
+          starters: [
+            "If someone is starting in Paris, {anchor} is useful because",
+            "For TGV versus OUIGO questions, {anchor} works well because",
+            "If station names are part of the confusion, {anchor} helps because",
+            "For day-trip versus overnight decisions, {anchor} is practical because",
+            "When readers need the transport options framed clearly, {anchor} is a good page because",
+            "If the route still feels fuzzy, {anchor} is worth sending because",
+            "For comments about how to make the move from Paris, {anchor} feels natural because",
+            "If the goal is to simplify the trip before booking, {anchor} is a good fit because",
+          ],
+          reasons: [
+            "it explains why TGV should be the baseline before anything else,",
+            "it shows when OUIGO or other options make sense without overcomplicating the trip,",
+            "it reduces confusion around departure and arrival stations,",
+            "it frames booking order, price logic, and trip shape in one place,",
+            "it helps readers think about the transfer as part of the full Lyon visit,",
+            "it keeps the answer on transport rather than drifting into unrelated station trivia,",
+          ],
+          closers: [
+            "so it sounds like a useful travel recommendation, not an exact-match play.",
+            "which makes it a clean link in discussion threads.",
+            "so the link feels earned and practical.",
+            "which is the right tone for this kind of question.",
+            "so it fits natural trip-planning conversation.",
+          ],
+        },
+      },
+    },
+    gourmet: {
+      targetUrl: "https://xn--cekd2a.net/gourmet/",
+      count: 32,
+      title: "リヨン 美食页外链建设文案 32 条",
+      shortName: "リヨン 美食页",
+      summary:
+        "本页只服务 `/gourmet/`。锚文本会偏向“吃什么这页”“这份美食整理”“里昂的餐厅和伴手礼页”这种自然表达，而不是一直精确对齐关键词。",
+      meta:
+        "美食页覆盖ブション、レストラン、名物、スイーツ、Bernachon 与お土産。文案强调旅行中的食决策，而不是餐厅榜单堆砌。",
+      intents: ["ブション", "餐厅选择", "名物", "甜点巧克力", "伴手礼"],
+      copyLocales: {
+        ja: {
+          anchors: [
+            "このグルメ整理",
+            "何を食べるかのページ",
+            "この食のまとめ",
+            "リヨンで食べるならこのページ",
+            "このレストランと土産の案内",
+            "この食べ歩きガイド",
+            "このグルメページ",
+            "リヨン グルメ",
+            "リヨン レストラン",
+          ],
+          starters: [
+            "何を食べるかで迷うなら{anchor}を先に見ておくと、",
+            "ブションに行くべきか考える人には{anchor}が渡しやすく、",
+            "甘い物や土産まで含めて見たいなら{anchor}が便利で、",
+            "店名ランキングより先に{anchor}を挟むと、",
+            "食の街としてのリヨンを掴みたい人には{anchor}が自然で、",
+            "食事の方針を先に決めたいなら{anchor}が役立ち、",
+            "ベルナシオンや Halles を含めて見たいなら{anchor}が使いやすく、",
+            "一本で食の方向性を返すなら{anchor}がちょうどよく、",
+          ],
+          reasons: [
+            "ブション、名物、スイーツ、土産の役割が分かれ、",
+            "“何を食べたい旅か”を先に整理しやすく、",
+            "有名店だけでなく体験の軸から考えやすく、",
+            "食事と買い物の動線を一度に見やすく、",
+            "Bernachon や Halles をどこで挟むか想像しやすく、",
+            "レストラン選びの前段としてかなり実用的で、",
+          ],
+          closers: [
+            "食系の相談に返すリンクとしてかなり自然です。",
+            "リヨンらしい食体験の入口として置きやすいです。",
+            "グルメ系の広めの検索意図を受けるページとして使いやすいです。",
+            "食べる・買うの判断を一本にまとめたい時に向いています。",
+            "コメントで貼っても不自然さが出にくいです。",
+          ],
+        },
+        en: {
+          anchors: [
+            "this food guide",
+            "the Lyon eating page",
+            "this gourmet page",
+            "the restaurant-and-souvenir guide",
+            "this food summary",
+            "the eating guide here",
+            "this food page",
+            "Lyon food",
+            "Lyon restaurants",
+          ],
+          starters: [
+            "If someone is still deciding what to eat, {anchor} is a useful page because",
+            "For bouchon versus sweets versus souvenirs questions, {anchor} helps because",
+            "When the food plan is still vague, {anchor} works well because",
+            "Before chasing restaurant names, {anchor} is practical because",
+            "If readers want Lyon as a food city explained first, {anchor} makes sense because",
+            "For comments about what to eat or buy, {anchor} is a natural link because",
+            "If the goal is to organize the food part of the trip, {anchor} is worth sending because",
+            "When someone wants one page for restaurants, sweets, and gifts, {anchor} fits because",
+          ],
+          reasons: [
+            "it separates bouchons, specialties, sweets, chocolate, and souvenirs clearly,",
+            "it helps readers decide what kind of food experience they actually want,",
+            "it covers eating and buying in the same planning flow,",
+            "it makes famous stops like Bernachon and Halles easier to place in the trip,",
+            "it gives more decision value than just another restaurant list,",
+            "it works as a clearer entry point into Lyon's food culture,",
+          ],
+          closers: [
+            "so the link feels genuinely useful in discussion.",
+            "which is why it works better than an exact-match drop.",
+            "so it reads like a normal recommendation from another traveler.",
+            "which makes it a strong comment-style placement.",
+            "so the backlink stays natural and relevant.",
+          ],
+        },
+      },
+    },
+    "model-course": {
+      targetUrl: "https://xn--cekd2a.net/model-course/",
+      count: 32,
+      title: "リヨン 模型路线页外链建设文案 32 条",
+      shortName: "リヨン 模型路线页",
+      summary:
+        "本页只服务 `/model-course/`。锚文本会更自然地写成“怎么回里昂这页”“这份行程整理”“半日到一日的路线页”，而不是只盯着精确词。",
+      meta:
+        "模型路线页解决的是“有限时间怎么回里昂”。文案围绕半日、1 日、2 日、区块取舍、顺路感和人群差异来组织。",
+      intents: ["半日路线", "1 日路线", "2 日延展", "顺路判断", "时间取舍"],
+      copyLocales: {
+        ja: {
+          anchors: [
+            "この回り方ガイド",
+            "半日から一日の行程整理",
+            "このモデルコースページ",
+            "どう回るかのまとめ",
+            "このルート案内",
+            "日数別の回り方ページ",
+            "この観光動線メモ",
+            "リヨン 観光 モデル コース",
+            "リヨン 観光 1 日",
+          ],
+          starters: [
+            "どこから回るかで迷うなら{anchor}を先に見ると、",
+            "半日か一日かで悩む人には{anchor}が渡しやすく、",
+            "初回の観光動線を作るなら{anchor}が役立ち、",
+            "旧市街と Fourviere の組み方を考えるなら{anchor}が便利で、",
+            "時間が限られる人には{anchor}が自然で、",
+            "観光地一覧より先に{anchor}を挟むと、",
+            "歩き方と順番を先に決めたいなら{anchor}が使いやすく、",
+            "人に回り方だけ返すなら{anchor}がちょうどよく、",
+          ],
+          reasons: [
+            "半日、1 日、2 日以上の差がつかみやすく、",
+            "どこを削ってどこを残すか判断しやすく、",
+            "旧市街、Fourviere、Presqu'ile のつなぎ方が見えやすく、",
+            "順番、休憩、移動の感覚まで想像しやすく、",
+            "限られた時間でもリヨンらしさを残しやすく、",
+            "家族連れや一人旅など条件差も考えやすく、",
+          ],
+          closers: [
+            "行程相談に返すページとしてかなり使いやすいです。",
+            "回り方の入口として自然に紹介できます。",
+            "観光動線を一本で返したい時に向いています。",
+            "限られた時間の判断材料としてちょうどいいです。",
+            "コメントでも過度な SEO 感が出にくいです。",
+          ],
+        },
+        en: {
+          anchors: [
+            "this itinerary guide",
+            "the route-planning page",
+            "this Lyon route page",
+            "the half-day to one-day guide",
+            "this model-course page",
+            "the sightseeing flow guide",
+            "this route summary",
+            "Lyon itinerary",
+            "one day in Lyon",
+          ],
+          starters: [
+            "If someone is unsure how to structure the visit, {anchor} is helpful because",
+            "For half-day versus one-day planning, {anchor} works well because",
+            "When the route order matters more than the attraction list, {anchor} is useful because",
+            "If readers want to combine the old town and Fourviere cleanly, {anchor} makes sense because",
+            "For limited-time trips, {anchor} is a practical page because",
+            "If the plan still needs a walkable sequence, {anchor} is worth sending because",
+            "For discussion about how to move through Lyon, {anchor} feels natural because",
+            "When someone wants one page for route logic, {anchor} is a good fit because",
+          ],
+          reasons: [
+            "it makes the difference between half-day, one-day, and longer stays clearer,",
+            "it helps people decide what to cut and what to keep,",
+            "it gives a stronger sense of order, pacing, and district handoff,",
+            "it keeps the route anchored in the parts of Lyon that matter most on a short trip,",
+            "it is more useful than a flat list of places when time is limited,",
+            "it helps readers keep a recognizably Lyon-shaped day even with constraints,",
+          ],
+          closers: [
+            "so it fits the kind of recommendation people actually post in comments.",
+            "which keeps the backlink natural instead of over-optimized.",
+            "so the page feels like a real planning aid.",
+            "which is exactly what a route question usually needs.",
+            "so it lands like advice, not keyword targeting.",
+          ],
+        },
+      },
+    },
+  };
+
+  const state = {
+    copyLocale: "ja",
+  };
+
   const randomState = {
     plain: { order: [], cursor: 0 },
     anchor: { order: [], cursor: 0 },
@@ -463,13 +570,9 @@
       .replaceAll('"', "&quot;");
   }
 
-  function getSavedLanguage() {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved === "en" ? "en" : "zh";
-  }
-
-  function t() {
-    return ui[state.language];
+  function getSavedLocale() {
+    const saved = localStorage.getItem(COPY_LOCALE_KEY);
+    return saved === "en" ? "en" : "ja";
   }
 
   function currentPage() {
@@ -478,29 +581,28 @@
 
   function buildEntries() {
     const page = currentPage();
-    const leads = page.openers[state.language];
-    const angles = page.angles[state.language];
-    const anchors = page.anchors[state.language];
+    const localeConfig = page.copyLocales[state.copyLocale];
     const entries = [];
 
-    for (const lead of leads) {
-      for (const angle of angles) {
-        const anchor = anchors[entries.length % anchors.length];
-        const joiner = state.language === "en" ? ". " : "。";
-        entries.push({
-          plain: `${lead} ${anchor}: ${page.targetUrl} ${angle}`,
-          anchor: `${lead} <a href="${page.targetUrl}">${anchor}</a>${joiner}${angle}`,
-          rendered: `${lead} ${anchor}${joiner}${angle}`,
-          richText: `${lead} ${anchor}${joiner}${angle}`,
-          richHtml: `${escapeHtml(lead)} <a href="${page.targetUrl}">${escapeHtml(anchor)}</a>${joiner}${escapeHtml(angle)}`,
-        });
-      }
+    for (let index = 0; index < page.count; index += 1) {
+      const anchor = localeConfig.anchors[index % localeConfig.anchors.length];
+      const starter = localeConfig.starters[index % localeConfig.starters.length];
+      const reason = localeConfig.reasons[(index * 2) % localeConfig.reasons.length];
+      const closer = localeConfig.closers[(index * 3) % localeConfig.closers.length];
+      const rendered = `${starter.replace("{anchor}", anchor)}${reason}${closer}`.replace(/\s+/g, " ").trim();
+      entries.push({
+        plain: `${rendered} ${page.targetUrl}`,
+        anchor: rendered.replace(anchor, `<a href="${page.targetUrl}">${anchor}</a>`),
+        rendered,
+        richText: rendered,
+        richHtml: escapeHtml(rendered).replace(escapeHtml(anchor), `<a href="${page.targetUrl}">${escapeHtml(anchor)}</a>`),
+      });
     }
 
-    return entries.slice(0, page.count);
+    return entries;
   }
 
-  function setStatus(message = t().statusInitial) {
+  function setStatus(message = `当前文案语言：${localeLabels[state.copyLocale]}；当前页面共 ${buildEntries().length} 条。`) {
     status.textContent = message;
   }
 
@@ -509,7 +611,7 @@
       await navigator.clipboard.writeText(text);
       setStatus(message);
     } catch (error) {
-      setStatus(t().copyFailure(message));
+      setStatus(`复制失败，请手动复制。${message}`);
     }
   }
 
@@ -528,9 +630,9 @@
     } catch (error) {
       try {
         await navigator.clipboard.writeText(plainText);
-        setStatus(t().copyFallback(message));
+        setStatus(`${message}（已回退为纯文本复制）`);
       } catch (fallbackError) {
-        setStatus(t().copyFailure(message));
+        setStatus(`复制失败，请手动复制。${message}`);
       }
     }
   }
@@ -578,16 +680,25 @@
     });
   }
 
-  async function handleCopy(entry, column, isRandom) {
-    const labelSet = isRandom ? t().randomLabels : t().copyLabels;
-    const message = t().copySuccess(labelSet[column], currentPage().name[state.language], buildEntries().length);
+  function renderCopyLocaleControls() {
+    copyLanguageControls.innerHTML = Object.entries(localeLabels)
+      .map(
+        ([localeKey, label]) => `
+          <button class="toggle-btn ${state.copyLocale === localeKey ? "is-active" : ""}" type="button" data-copy-locale="${localeKey}">
+            ${label}
+          </button>
+        `
+      )
+      .join("");
+  }
 
-    if (column === "rich") {
-      await copyRichText(entry.richHtml, entry.richText, message);
-      return;
-    }
-
-    await copyText(entry[column], message);
+  function renderChips(container, values) {
+    container.innerHTML = "";
+    values.forEach((value) => {
+      const chip = document.createElement("span");
+      chip.textContent = value;
+      container.appendChild(chip);
+    });
   }
 
   function renderRows() {
@@ -599,32 +710,52 @@
         <td>
           <code>${escapeHtml(entry.plain)}</code>
           <div class="cell-actions">
-            <button class="copy-btn" type="button" data-copy-column="plain">${t().copyRow}</button>
+            <button class="copy-btn" type="button" data-copy-column="plain">复制本条</button>
           </div>
         </td>
         <td>
           <code>${escapeHtml(entry.anchor)}</code>
           <div class="cell-actions">
-            <button class="copy-btn" type="button" data-copy-column="anchor">${t().copyRow}</button>
+            <button class="copy-btn" type="button" data-copy-column="anchor">复制本条</button>
           </div>
         </td>
         <td>
-          <div>${entry.rendered}</div>
+          <div>${escapeHtml(entry.rendered)}</div>
           <div class="cell-actions">
-            <button class="copy-btn" type="button" data-copy-column="rendered">${t().copyRow}</button>
+            <button class="copy-btn" type="button" data-copy-column="rendered">复制本条</button>
           </div>
         </td>
         <td>
-          <div>${entry.rendered}</div>
+          <div>${escapeHtml(entry.rendered)}</div>
           <div class="cell-actions">
-            <button class="copy-btn" type="button" data-copy-column="rich">${t().copyRow}</button>
+            <button class="copy-btn" type="button" data-copy-column="rich">复制本条</button>
           </div>
         </td>
       `;
 
       tr.querySelectorAll("[data-copy-column]").forEach((button) => {
         button.addEventListener("click", () => {
-          handleCopy(entry, button.dataset.copyColumn, false);
+          const column = button.dataset.copyColumn;
+          const labels = {
+            plain: "纯文本源码",
+            anchor: "锚文本文案源码",
+            rendered: "渲染后文案",
+            rich: "富文本评论器文案",
+          };
+
+          if (column === "rich") {
+            copyRichText(
+              entry.richHtml,
+              entry.richText,
+              `已复制：${labels[column]}；文案语言：${localeLabels[state.copyLocale]}；页面：${currentPage().shortName}。`
+            );
+            return;
+          }
+
+          copyText(
+            entry[column],
+            `已复制：${labels[column]}；文案语言：${localeLabels[state.copyLocale]}；页面：${currentPage().shortName}。`
+          );
         });
       });
 
@@ -632,72 +763,75 @@
     });
   }
 
-  function fillChips(container, values) {
-    container.innerHTML = "";
-    values.forEach((value) => {
-      const chip = document.createElement("span");
-      chip.textContent = value;
-      container.appendChild(chip);
-    });
-  }
-
-  function applyLanguage() {
+  function applyPageMeta() {
     const page = currentPage();
-    document.documentElement.lang = state.language === "en" ? "en" : "zh-CN";
-    document.title = `${page.name[state.language]} ${t().titleSuffix} ${page.count}`;
-    document.getElementById("breadcrumbs-home").textContent = t().breadcrumbsHome;
-    document.getElementById("breadcrumbs-site").textContent = t().breadcrumbsSite;
-    document.getElementById("site-name-inline").textContent = page.name[state.language];
-    document.getElementById("page-title").textContent = `${page.name[state.language]} ${t().titleSuffix} ${page.count}`;
-    document.getElementById("target-label").textContent = t().targetLabel;
+    document.documentElement.lang = "zh-CN";
+    document.title = page.title;
+    document.getElementById("site-name-inline").textContent = page.shortName;
+    document.getElementById("page-title").textContent = page.title;
     document.getElementById("target-link").textContent = page.targetUrl;
     document.getElementById("target-link").href = page.targetUrl;
-    document.getElementById("page-summary").textContent = page.summary[state.language];
-    document.getElementById("meta-description").innerHTML = `${t().metaPrefix}${page.meta[state.language]}`;
-    document.getElementById("keyword-label").textContent = t().keywordLabel;
-    document.getElementById("intent-label").textContent = t().intentLabel;
-    document.getElementById("th-plain").textContent = t().tableHeaders.plain;
-    document.getElementById("th-anchor").textContent = t().tableHeaders.anchor;
-    document.getElementById("th-rendered").textContent = t().tableHeaders.rendered;
-    document.getElementById("th-rich").textContent = t().tableHeaders.rich;
-
-    document.querySelectorAll("[data-random-column]").forEach((button) => {
-      button.textContent = t().randomButton;
-    });
-
-    fillChips(keywordChips, page.anchors[state.language]);
-    fillChips(intentChips, page.intents[state.language]);
-
-    document.querySelectorAll(".lang-btn").forEach((button) => {
-      button.classList.toggle("is-active", button.dataset.lang === state.language);
-    });
+    document.getElementById("page-summary").textContent = page.summary;
+    document.getElementById("meta-description").textContent = page.meta;
+    renderChips(keywordChips, page.copyLocales[state.copyLocale].anchors);
+    renderChips(intentChips, page.intents);
   }
 
-  function setActiveLanguage(language) {
-    state.language = language === "en" ? "en" : "zh";
-    localStorage.setItem(STORAGE_KEY, state.language);
+  function setCopyLocale(locale) {
+    state.copyLocale = locale === "en" ? "en" : "ja";
+    localStorage.setItem(COPY_LOCALE_KEY, state.copyLocale);
     resetRandomState();
-    applyLanguage();
+    renderCopyLocaleControls();
+    applyPageMeta();
     renderRows();
     setStatus();
   }
 
-  document.querySelectorAll(".lang-btn").forEach((button) => {
-    button.addEventListener("click", () => setActiveLanguage(button.dataset.lang));
-  });
-
   document.querySelectorAll("[data-random-column]").forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       const column = button.dataset.randomColumn;
       const entry = getNextRandomEntry(column);
-      if (entry) {
-        handleCopy(entry, column, true);
+      if (!entry) {
+        return;
       }
+
+      const labels = {
+        plain: "随机纯文本源码",
+        anchor: "随机锚文本文案源码",
+        rendered: "随机渲染后文案",
+        rich: "随机富文本评论器文案",
+      };
+
+      if (column === "rich") {
+        await copyRichText(
+          entry.richHtml,
+          entry.richText,
+          `已复制：${labels[column]}；文案语言：${localeLabels[state.copyLocale]}；页面：${currentPage().shortName}。`
+        );
+        return;
+      }
+
+      await copyText(
+        entry[column],
+        `已复制：${labels[column]}；文案语言：${localeLabels[state.copyLocale]}；页面：${currentPage().shortName}。`
+      );
     });
   });
 
-  state.language = getSavedLanguage();
-  applyLanguage();
+  copyLanguageControls.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-copy-locale]");
+    if (!button) {
+      return;
+    }
+    if (button.dataset.copyLocale === state.copyLocale) {
+      return;
+    }
+    setCopyLocale(button.dataset.copyLocale);
+  });
+
+  state.copyLocale = getSavedLocale();
+  renderCopyLocaleControls();
+  applyPageMeta();
   renderRows();
   setStatus();
 })();

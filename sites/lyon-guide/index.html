@@ -3,190 +3,124 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>リヨン完全ガイド Page Index</title>
+    <title>リヨン完全ガイド 页面索引</title>
     <link rel="stylesheet" href="../../assets/hub.css" />
   </head>
   <body>
     <main>
-      <div class="topbar">
-        <div class="lang-switch" aria-label="Language switcher">
-          <button class="lang-btn" type="button" data-lang="zh">中文</button>
-          <button class="lang-btn" type="button" data-lang="en">English</button>
-        </div>
-      </div>
-
       <section class="hero">
-        <p class="breadcrumbs"><a href="../../" id="breadcrumbs-home"></a> / <span>リヨン完全ガイド</span></p>
+        <p class="breadcrumbs"><a href="../../">返回项目首页</a> / <span>リヨン完全ガイド</span></p>
         <div class="summary">
-          <h1 id="hero-title"></h1>
-          <p id="hero-body-1"></p>
-          <p id="hero-body-2"></p>
+          <h1>リヨン完全ガイド 页面索引</h1>
+          <p>这个站点已按页面拆成 6 个独立外链文案库。每个页面只指向一个目标链接，不串页、不混意图，适合按首页、酒店、机场、巴黎到里昂、美食、模型路线分别做外链。</p>
+          <p>里昂模块总库为 200 条：首页 40 条，其余 5 个页面各 32 条。锚文本分布已改成更接近真实评论区的自然表达，精确匹配只占少量比例。</p>
         </div>
       </section>
 
       <section class="panel">
         <div class="section-head">
-          <h2 id="section-title"></h2>
-          <p class="section-note" id="section-note"></p>
+          <h2>页面入口</h2>
+          <p class="section-note">6 个页面库 / 200 条文案</p>
         </div>
-        <div class="grid" id="page-grid"></div>
-      </section>
-    </main>
 
-    <script>
-      const STORAGE_KEY = "outreach-copy-hub-language";
-      const pages = [
-        {
-          title: "首页 / Home",
-          route: "/",
-          href: "./home/",
-          count: 40,
-          anchors: ["リヨン", "リヨン 観光", "リヨン 旅行", "フランス リヨン", "リヨン完全ガイド"],
-          desc: {
-            zh: "城市入口页，只承接首页 broad intent。围绕世界遗产、治安、旅行基础和站内分流生成 40 条文案。",
-            en: "Broad-intent homepage library focused on Lyon as a city entry page. It covers heritage, safety framing, travel basics, and internal branching with 40 entries.",
-          },
-        },
-        {
-          title: "酒店页 / Hotel",
-          route: "/hotel/",
-          href: "./hotel/",
-          count: 32,
-          anchors: ["リヨン ホテル", "リヨン 宿泊", "リヨン おすすめ ホテル", "リヨン ホテル おすすめ 地区", "リヨンのホテルガイド"],
-          desc: {
-            zh: "住宿区域与酒店选择页，只围绕住哪里、怎么选区、预算和订前判断生成 32 条文案。",
-            en: "Accommodation page focused on where to stay, district choice, budget, and booking checks with 32 entries.",
-          },
-        },
-        {
-          title: "机场页 / Airport",
-          route: "/airport/",
-          href: "./airport/",
-          count: 32,
-          anchors: ["リヨン 空港 アクセス", "リヨン 空港", "リヨン 空港 から 市内", "リヨン空港から中心部への行き方"],
-          desc: {
-            zh: "机场到市区页，只围绕 Rhônexpress、出租车、空港站和入城逻辑生成 32 条文案。",
-            en: "Airport-access page focused on Rhônexpress, taxis, the airport station, and city-entry logic with 32 entries.",
-          },
-        },
-        {
-          title: "巴黎到里昂页 / Paris to Lyon",
-          route: "/paris-lyon/",
-          href: "./paris-lyon/",
-          count: 32,
-          anchors: ["パリ から リヨン", "パリ リヨン tgv", "パリ から リヨン 電車", "パリからリヨンへの行き方", "パリ リヨン 移動"],
-          desc: {
-            zh: "巴黎到里昂交通页，只围绕 TGV、OUIGO、出发站到着站和订票判断生成 32 条文案。",
-            en: "Paris-to-Lyon transit page focused on TGV, OUIGO, departure and arrival stations, and booking decisions with 32 entries.",
-          },
-        },
-        {
-          title: "美食页 / Gourmet",
-          route: "/gourmet/",
-          href: "./gourmet/",
-          count: 32,
-          anchors: ["リヨン グルメ", "リヨン レストラン", "リヨン ブション", "リヨン お土産", "ベルナシオン リヨン"],
-          desc: {
-            zh: "里昂美食页，只围绕餐厅、ブション、甜点、巧克力和伴手礼生成 32 条文案。",
-            en: "Food page focused on restaurants, bouchons, sweets, chocolate, and souvenirs with 32 entries.",
-          },
-        },
-        {
-          title: "模型路线页 / Model Course",
-          route: "/model-course/",
-          href: "./model-course/",
-          count: 32,
-          anchors: ["リヨン 観光 モデル コース", "リヨン モデル コース", "リヨン 観光 1 日", "リヨン 観光 半日", "リヨン観光の回り方"],
-          desc: {
-            zh: "路线页只围绕半日、1 日、2 日以上回法和顺路判断生成 32 条文案。",
-            en: "Itinerary page focused on half-day, one-day, and multi-day route logic with 32 entries.",
-          },
-        },
-      ];
-
-      const translations = {
-        zh: {
-          breadcrumbsHome: "返回项目首页",
-          heroTitle: "リヨン完全ガイド 页面索引",
-          hero1: "这个站点已按页面拆成 6 个独立外链文案库。每个页面只对应一个目标链接，不串页、不混意图，适合按 landing page 精准做外链。",
-          hero2: "当前总库已扩到 200 条：首页 40 条，酒店 / 机场 / 巴黎到里昂 / 美食 / 模型路线各 32 条。点击任一页面即可进入对应文案库。",
-          sectionTitle: "页面入口",
-          sectionNote: "6 个页面库 / 200 条文案",
-          routeLabel: "页面：",
-          targetLabel: "链接：",
-          countLabel: "文案数：",
-          anchorsLabel: "锚词池：",
-          cta: "进入页面文案库",
-        },
-        en: {
-          breadcrumbsHome: "Back to Hub",
-          heroTitle: "Lyon Complete Guide Page Index",
-          hero1: "This site is now split into 6 page-level outreach libraries. Each library maps to one target URL only, without mixing page intent, so you can build backlinks against the right landing page.",
-          hero2: "The Lyon library now contains 200 entries in total: 40 for the homepage and 32 each for hotel, airport, Paris-to-Lyon, gourmet, and model-course pages.",
-          sectionTitle: "Page Entrypoints",
-          sectionNote: "6 page libraries / 200 entries",
-          routeLabel: "Route: ",
-          targetLabel: "Link: ",
-          countLabel: "Entries: ",
-          anchorsLabel: "Anchor pool: ",
-          cta: "Open Page Library",
-        },
-      };
-
-      function getSavedLanguage() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        return saved === "en" ? "en" : "zh";
-      }
-
-      function render(lang) {
-        const copy = translations[lang];
-        document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
-        document.title = lang === "en" ? "Lyon Complete Guide Page Index" : "リヨン完全ガイド 页面索引";
-        document.getElementById("breadcrumbs-home").textContent = copy.breadcrumbsHome;
-        document.getElementById("hero-title").textContent = copy.heroTitle;
-        document.getElementById("hero-body-1").textContent = copy.hero1;
-        document.getElementById("hero-body-2").textContent = copy.hero2;
-        document.getElementById("section-title").textContent = copy.sectionTitle;
-        document.getElementById("section-note").textContent = copy.sectionNote;
-        document.querySelectorAll(".lang-btn").forEach((button) => {
-          button.classList.toggle("is-active", button.dataset.lang === lang);
-        });
-
-        const grid = document.getElementById("page-grid");
-        grid.innerHTML = "";
-
-        pages.forEach((page) => {
-          const card = document.createElement("article");
-          card.className = "card";
-          card.innerHTML = `
-            <h3>${page.title}</h3>
-            <p>${page.desc[lang]}</p>
+        <div class="grid">
+          <article class="card">
+            <h3>首页 / Home</h3>
+            <p>城市入口页，围绕世界遗产、治安、旅行基础与站内分流做 40 条首页文案。</p>
             <div class="meta">
-              <div><span>${copy.routeLabel}</span><a href="${page.href}">${page.route}</a></div>
-              <div><span>${copy.targetLabel}</span><a href="https://xn--cekd2a.net${page.route}">https://xn--cekd2a.net${page.route}</a></div>
-              <div><span>${copy.countLabel}</span>${page.count}</div>
+              <div><span>页面：</span><a href="./home/">/</a></div>
+              <div><span>链接：</span><a href="https://xn--cekd2a.net/">https://xn--cekd2a.net/</a></div>
+              <div><span>文案数：</span>40</div>
             </div>
             <div class="badge-row">
-              ${page.anchors.map((anchor) => `<span class="badge">${anchor}</span>`).join("")}
+              <span class="badge">城市入口</span>
+              <span class="badge">自然锚文本</span>
+              <span class="badge">日本語 / English</span>
             </div>
-            <div style="margin-top: 18px">
-              <a class="primary-link" href="${page.href}">${copy.cta}</a>
+            <div style="margin-top: 18px"><a class="primary-link" href="./home/">进入页面文案库</a></div>
+          </article>
+
+          <article class="card">
+            <h3>酒店页 / Hotel</h3>
+            <p>住宿区域与酒店选择页，围绕住哪里、预算、区位和订前判断做 32 条文案。</p>
+            <div class="meta">
+              <div><span>页面：</span><a href="./hotel/">/hotel/</a></div>
+              <div><span>链接：</span><a href="https://xn--cekd2a.net/hotel/">https://xn--cekd2a.net/hotel/</a></div>
+              <div><span>文案数：</span>32</div>
             </div>
-          `;
-          grid.appendChild(card);
-        });
-      }
+            <div class="badge-row">
+              <span class="badge">住宿区域</span>
+              <span class="badge">自然锚文本</span>
+              <span class="badge">日本語 / English</span>
+            </div>
+            <div style="margin-top: 18px"><a class="primary-link" href="./hotel/">进入页面文案库</a></div>
+          </article>
 
-      const initialLanguage = getSavedLanguage();
-      render(initialLanguage);
+          <article class="card">
+            <h3>机场页 / Airport</h3>
+            <p>机场到市区页，围绕 Rhônexpress、出租车、机场站与入城逻辑做 32 条文案。</p>
+            <div class="meta">
+              <div><span>页面：</span><a href="./airport/">/airport/</a></div>
+              <div><span>链接：</span><a href="https://xn--cekd2a.net/airport/">https://xn--cekd2a.net/airport/</a></div>
+              <div><span>文案数：</span>32</div>
+            </div>
+            <div class="badge-row">
+              <span class="badge">机场进城</span>
+              <span class="badge">自然锚文本</span>
+              <span class="badge">日本語 / English</span>
+            </div>
+            <div style="margin-top: 18px"><a class="primary-link" href="./airport/">进入页面文案库</a></div>
+          </article>
 
-      document.querySelectorAll(".lang-btn").forEach((button) => {
-        button.addEventListener("click", () => {
-          const lang = button.dataset.lang === "en" ? "en" : "zh";
-          localStorage.setItem(STORAGE_KEY, lang);
-          render(lang);
-        });
-      });
-    </script>
+          <article class="card">
+            <h3>巴黎到里昂页 / Paris to Lyon</h3>
+            <p>巴黎出发交通页，围绕 TGV、OUIGO、站名理解和订票判断做 32 条文案。</p>
+            <div class="meta">
+              <div><span>页面：</span><a href="./paris-lyon/">/paris-lyon/</a></div>
+              <div><span>链接：</span><a href="https://xn--cekd2a.net/paris-lyon/">https://xn--cekd2a.net/paris-lyon/</a></div>
+              <div><span>文案数：</span>32</div>
+            </div>
+            <div class="badge-row">
+              <span class="badge">巴黎出发</span>
+              <span class="badge">自然锚文本</span>
+              <span class="badge">日本語 / English</span>
+            </div>
+            <div style="margin-top: 18px"><a class="primary-link" href="./paris-lyon/">进入页面文案库</a></div>
+          </article>
+
+          <article class="card">
+            <h3>美食页 / Gourmet</h3>
+            <p>里昂吃什么与买什么的页面，围绕ブション、餐厅、甜点、巧克力和伴手礼做 32 条文案。</p>
+            <div class="meta">
+              <div><span>页面：</span><a href="./gourmet/">/gourmet/</a></div>
+              <div><span>链接：</span><a href="https://xn--cekd2a.net/gourmet/">https://xn--cekd2a.net/gourmet/</a></div>
+              <div><span>文案数：</span>32</div>
+            </div>
+            <div class="badge-row">
+              <span class="badge">美食与伴手礼</span>
+              <span class="badge">自然锚文本</span>
+              <span class="badge">日本語 / English</span>
+            </div>
+            <div style="margin-top: 18px"><a class="primary-link" href="./gourmet/">进入页面文案库</a></div>
+          </article>
+
+          <article class="card">
+            <h3>模型路线页 / Model Course</h3>
+            <p>有限时间下的路线页，围绕半日、1 日、2 日以上和回法判断做 32 条文案。</p>
+            <div class="meta">
+              <div><span>页面：</span><a href="./model-course/">/model-course/</a></div>
+              <div><span>链接：</span><a href="https://xn--cekd2a.net/model-course/">https://xn--cekd2a.net/model-course/</a></div>
+              <div><span>文案数：</span>32</div>
+            </div>
+            <div class="badge-row">
+              <span class="badge">路线规划</span>
+              <span class="badge">自然锚文本</span>
+              <span class="badge">日本語 / English</span>
+            </div>
+            <div style="margin-top: 18px"><a class="primary-link" href="./model-course/">进入页面文案库</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
   </body>
 </html>

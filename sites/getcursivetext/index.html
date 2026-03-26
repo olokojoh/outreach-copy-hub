@@ -3,120 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GetCursiveText Page Index</title>
+    <title>GetCursiveText 页面索引</title>
     <link rel="stylesheet" href="../../assets/hub.css" />
   </head>
   <body>
     <main>
-      <div class="topbar">
-        <div class="lang-switch" aria-label="Language switcher">
-          <button class="lang-btn" type="button" data-lang="zh">中文</button>
-          <button class="lang-btn" type="button" data-lang="en">English</button>
-        </div>
-      </div>
-
       <section class="hero">
-        <p class="breadcrumbs"><a href="../../" id="breadcrumbs-home"></a> / <span>GetCursiveText</span></p>
+        <p class="breadcrumbs"><a href="../../">返回项目首页</a> / <span>GetCursiveText</span></p>
         <div class="summary">
-          <h1 id="hero-title"></h1>
-          <p id="hero-body-1"></p>
-          <p id="hero-body-2"></p>
+          <h1>GetCursiveText 页面索引</h1>
+          <p>这个站点当前只维护 1 个页面库：首页文案库。结构已经从“站点页直接展示文案表格”改成“站点页索引 -> 页面级文案库”，后续新增 landing page 时可以直接继续扩。</p>
+          <p>文案库里的锚文本分布已改成更自然的评论式表达，避免机械重复关键词；文案语言切换也只作用于复制内容，不再作用于整个网站界面。</p>
         </div>
       </section>
 
       <section class="panel">
         <div class="section-head">
-          <h2 id="section-title"></h2>
-          <p class="section-note" id="section-note"></p>
+          <h2>页面入口</h2>
+          <p class="section-note">1 个页面库 / 100 条文案</p>
         </div>
+
         <div class="grid">
           <article class="card">
-            <h3>Homepage</h3>
-            <p id="card-desc"></p>
+            <h3>首页 / Home</h3>
+            <p>首页文案库，围绕 `cursive text generator` 等核心词做首页外链，但锚文本会按真实评论语气自然分布，而不是持续精确匹配。</p>
             <div class="meta">
-              <div><span id="route-label"></span><a href="./home/">/</a></div>
-              <div><span id="target-label"></span><a href="https://getcursivetext.com/">https://getcursivetext.com/</a></div>
-              <div><span id="count-label"></span>100</div>
+              <div><span>页面：</span><a href="./home/">/</a></div>
+              <div><span>链接：</span><a href="https://getcursivetext.com/">https://getcursivetext.com/</a></div>
+              <div><span>文案数：</span>100</div>
             </div>
             <div class="badge-row">
-              <span class="badge">cursive text generator</span>
-              <span class="badge">letters in cursive</span>
-              <span class="badge">cursive practice sheets</span>
-              <span class="badge">signature font generator</span>
+              <span class="badge">关键词过滤</span>
+              <span class="badge">自然锚文本</span>
+              <span class="badge">文案语言 English / 中文</span>
+              <span class="badge">富文本复制</span>
             </div>
             <div style="margin-top: 18px">
-              <a class="primary-link" href="./home/" id="cta"></a>
+              <a class="primary-link" href="./home/">进入页面文案库</a>
             </div>
           </article>
         </div>
       </section>
     </main>
-
-    <script>
-      const STORAGE_KEY = "outreach-copy-hub-language";
-      const translations = {
-        zh: {
-          breadcrumbsHome: "返回项目首页",
-          heroTitle: "GetCursiveText 页面索引",
-          hero1: "这个站点当前只维护首页外链文案库。页面已经从“站点即文案表格”重构成“站点页索引 -> 页面文案库”的结构，方便以后继续补充更多 landing page。",
-          hero2: "目前首页库保留 10 个 SEO 关键词筛选、100 条文案和四列复制能力。点击首页入口即可进入原有文案库。",
-          sectionTitle: "页面入口",
-          sectionNote: "1 个页面库 / 100 条文案",
-          routeLabel: "页面：",
-          targetLabel: "链接：",
-          countLabel: "文案数：",
-          cardDesc: "首页文案库，适合围绕 `cursive text generator` 等核心词做首页外链宣发，并支持关键词过滤。",
-          cta: "进入页面文案库",
-        },
-        en: {
-          breadcrumbsHome: "Back to Hub",
-          heroTitle: "GetCursiveText Page Index",
-          hero1: "This site currently maintains one homepage outreach library. The layout has been refactored from a single table page into a site index that points to page-level libraries, so it can scale to more landing pages later.",
-          hero2: "The homepage library keeps the existing 10-keyword filter, 100 entries, and four copy formats. Open the homepage card to access the original copy table.",
-          sectionTitle: "Page Entrypoints",
-          sectionNote: "1 page library / 100 entries",
-          routeLabel: "Route: ",
-          targetLabel: "Link: ",
-          countLabel: "Entries: ",
-          cardDesc: "Homepage library for core terms like `cursive text generator`, with keyword filtering and four copy formats.",
-          cta: "Open Page Library",
-        },
-      };
-
-      function getSavedLanguage() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        return saved === "en" ? "en" : "zh";
-      }
-
-      function render(lang) {
-        const copy = translations[lang];
-        document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
-        document.title = lang === "en" ? "GetCursiveText Page Index" : "GetCursiveText 页面索引";
-        document.getElementById("breadcrumbs-home").textContent = copy.breadcrumbsHome;
-        document.getElementById("hero-title").textContent = copy.heroTitle;
-        document.getElementById("hero-body-1").textContent = copy.hero1;
-        document.getElementById("hero-body-2").textContent = copy.hero2;
-        document.getElementById("section-title").textContent = copy.sectionTitle;
-        document.getElementById("section-note").textContent = copy.sectionNote;
-        document.getElementById("route-label").textContent = copy.routeLabel;
-        document.getElementById("target-label").textContent = copy.targetLabel;
-        document.getElementById("count-label").textContent = copy.countLabel;
-        document.getElementById("card-desc").textContent = copy.cardDesc;
-        document.getElementById("cta").textContent = copy.cta;
-        document.querySelectorAll(".lang-btn").forEach((button) => {
-          button.classList.toggle("is-active", button.dataset.lang === lang);
-        });
-      }
-
-      render(getSavedLanguage());
-
-      document.querySelectorAll(".lang-btn").forEach((button) => {
-        button.addEventListener("click", () => {
-          const lang = button.dataset.lang === "en" ? "en" : "zh";
-          localStorage.setItem(STORAGE_KEY, lang);
-          render(lang);
-        });
-      });
-    </script>
   </body>
 </html>

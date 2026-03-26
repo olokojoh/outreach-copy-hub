@@ -8,26 +8,21 @@
   </head>
   <body data-page-key="model-course">
     <main>
-      <div class="topbar">
-        <div class="lang-switch" aria-label="Language switcher">
-          <button class="lang-btn" type="button" data-lang="zh">中文</button>
-          <button class="lang-btn" type="button" data-lang="en">English</button>
-        </div>
-      </div>
       <section class="panel">
-        <p class="breadcrumbs"><a href="../../../" id="breadcrumbs-home"></a> / <a href="../" id="breadcrumbs-site"></a> / <span id="site-name-inline"></span></p>
+        <p class="breadcrumbs"><a href="../../../">返回项目首页</a> / <a href="../">返回站点页索引</a> / <span id="site-name-inline"></span></p>
         <h1 id="page-title"></h1>
-        <p><span id="target-label"></span><a id="target-link" href=""></a></p>
+        <p><span>目标页面：</span><a id="target-link" href=""></a></p>
         <p id="page-summary"></p>
         <div class="meta">
-          <p id="meta-description"></p>
-          <div><strong id="keyword-label"></strong><div class="keywords" id="keyword-chips"></div></div>
-          <div><strong id="intent-label"></strong><div class="keywords" id="intent-chips"></div></div>
+          <p><strong>页面定位：</strong><span id="meta-description"></span></p>
+          <div><strong>当前自然锚文本参考：</strong><div class="keywords" id="keyword-chips"></div></div>
+          <div><strong>页面意图标签：</strong><div class="keywords" id="intent-chips"></div></div>
         </div>
+        <div class="copy-config"><div class="config-row"><div class="config-label">文案语言：</div><div class="toggle-group" id="copy-language-controls"></div></div><p class="muted-note">这里只切换表格中的外链文案，不切换整个页面界面。锚文本已按自然评论分布重写。</p></div>
         <p class="status" id="status"></p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th><div class="th-head"><span class="th-label" id="th-plain"></span><button class="copy-btn" type="button" data-random-column="plain"></button></div></th><th><div class="th-head"><span class="th-label" id="th-anchor"></span><button class="copy-btn" type="button" data-random-column="anchor"></button></div></th><th><div class="th-head"><span class="th-label" id="th-rendered"></span><button class="copy-btn" type="button" data-random-column="rendered"></button></div></th><th><div class="th-head"><span class="th-label" id="th-rich"></span><button class="copy-btn" type="button" data-random-column="rich"></button></div></th></tr></thead>
+            <thead><tr><th><div class="th-head"><span class="th-label">纯文本文案源码</span><button class="copy-btn" type="button" data-random-column="plain">随机复制本列</button></div></th><th><div class="th-head"><span class="th-label">带有锚文本文案源码</span><button class="copy-btn" type="button" data-random-column="anchor">随机复制本列</button></div></th><th><div class="th-head"><span class="th-label">锚文本渲染后文案</span><button class="copy-btn" type="button" data-random-column="rendered">随机复制本列</button></div></th><th><div class="th-head"><span class="th-label">富文本评论器文案</span><button class="copy-btn" type="button" data-random-column="rich">随机复制本列</button></div></th></tr></thead>
             <tbody id="rows"></tbody>
           </table>
         </div>
