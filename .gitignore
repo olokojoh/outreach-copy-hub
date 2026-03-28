@@ -1,3 +1,8 @@
 .playwright-cli/
 .wrangler/
 .DS_Store
+
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
